@@ -1,0 +1,7 @@
+# PyRope cache
+.ropeproject/
+__pycache__/
+
+# Data files
+*.json
+*.csv
