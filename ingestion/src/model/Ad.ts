@@ -9,7 +9,9 @@ export class Ad {
     price: string;
     category: string;
     subCategory: string;
-    html: string;
+    location: string;
+    description: string;
+    thumbnail: string;
 
     constructor(data: any) {
         this.id = data.ad_id;
@@ -23,6 +25,6 @@ export class Ad {
         const parsedUrl = new String(data.ad_url).split('/');
         this.category = parsedUrl[1];
         this.subCategory = parsedUrl[2];
-        this.html = data.html;
+        this.thumbnail = data.thumbnail;
     }
 }
