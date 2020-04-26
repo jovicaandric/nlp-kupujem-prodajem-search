@@ -1,9 +1,9 @@
+import argparse
 import json
 import logging
 import re
-import sys
 from collections import namedtuple
-from typing import List, Tuple
+from typing import List
 
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -31,7 +31,7 @@ Ad = namedtuple(
 )
 
 
-def parse_ad_description_and_city(html: str) -> Tuple[str, str]:
+def parse_ad_description(html: str) -> str:
     soup = BeautifulSoup(html, "lxml")
 
     description_element = soup.find("div", class_="oglas-description")
@@ -42,6 +42,12 @@ def parse_ad_description_and_city(html: str) -> Tuple[str, str]:
     description = description_element.text
     description = re.sub("\\s+", " ", description).strip()
 
+    return description
+
+
+def parse_ad_city(html: str) -> str:
+    soup = BeautifulSoup(html, "lxml")
+
     city_name_element = soup.find(
         "div", class_="contact-info-row", attrs={"data-element-for": "regular-ad"}
     )
@@ -50,8 +56,7 @@ def parse_ad_description_and_city(html: str) -> Tuple[str, str]:
         city_name_element = soup.find("section", class_="locationSec")
 
     city_name = city_name_element.text.strip()
-
-    return description, city_name
+    return city_name
 
 
 def parse(filename: str) -> List[Ad]:
@@ -67,7 +72,8 @@ def parse(filename: str) -> List[Ad]:
             continue
 
         ad_html = source["html"]
-        ad_description, ad_city = parse_ad_description_and_city(html=ad_html)
+        ad_description = parse_ad_description(html=ad_html)
+        ad_city = parse_ad_city(html=ad_html)
 
         ad = Ad(
             url=source["url"],
@@ -87,8 +93,20 @@ def parse(filename: str) -> List[Ad]:
     return parsed_ads
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Parse KP ads from ElasticSearch index."
+    )
+    parser.add_argument("-i", "--input", type=str, help="Path to the input JSON file.")
+    parser.add_argument(
+        "-o", "--output", type=str, help="Path for the parsed CSV file."
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    input_filename, output_filename = sys.argv[1:]
+    args = parse_args()
+    input_filename, output_filename = args.input, args.output
 
     logger.info(f"Parsing ads from '{input_filename}'")
 
