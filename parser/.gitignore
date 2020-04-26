@@ -2,6 +2,9 @@
 .ropeproject/
 __pycache__/
 
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
 # Data files
 *.json
 *.csv
