@@ -1,0 +1,46 @@
+<mat-toolbar color="primary">Kupujem Prodajem NLP Powered Search Engine</mat-toolbar>
+<mat-progress-bar *ngIf="loader" mode="indeterminate"></mat-progress-bar>
+<form class="example-form">
+  <mat-form-field class="search-field">
+    <input matInput placeholder="Search kupujemprodajem.com" [(ngModel)]="query" name="query">
+  </mat-form-field>
+  <button mat-icon-button aria-label="Example icon-button with a heart icon" (click)="search()">
+    <mat-icon>search</mat-icon>
+  </button>
+</form>
+<div class="search-results">
+  <mat-card class="result-card" *ngFor="let result of results">
+    <a target="_blank" style="width: 100%;" href="https://kupujemprodajem.com{{result.url}}"
+      style="text-decoration:none">
+      <table>
+        <tr>
+          <td style="width: 150px;">
+
+            <img *ngIf="result.thumbnail" width="150" src="https://kupujemprodajem.com/{{result.thumbnail}}" />
+            <img *ngIf="!result.thumbnail" width="150"
+              src="https://images.kupujemprodajem.com//images/no_photo100.png" />
+          </td>
+          <td style="width: 250px;">
+            <p class="ad category">{{result.category}} > {{result.subCategory}}</p>
+            <p class="ad name">{{result.name}}</p>
+            <p class="ad desc">{{result.description}}</p>
+          </td>
+          <td style="width: 50px;">
+            <p class="ad price">{{result.price}} {{result.currency}}</p>
+          </td>
+          <td style="width: 50px;">
+            <p class="ad location">{{result.location}}</p>
+            <p class="ad posted">{{result.posted | date:'short'}}</p>
+          </td>
+        </tr>
+      </table>
+
+
+
+
+
+
+
+    </a>
+  </mat-card>
+</div>

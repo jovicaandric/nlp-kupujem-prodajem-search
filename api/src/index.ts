@@ -6,6 +6,12 @@ const es = new Client({ node: process.env.ELASTICSEARCH_HOST })
 const app = Express();
 const port = 8080 || process.env.PORT;
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 app.options('*', (req, res) => {
     res.send(200);
 });

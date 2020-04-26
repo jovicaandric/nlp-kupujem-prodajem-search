@@ -1,0 +1,45 @@
+.example-form {
+  width: 500px;
+  margin-left:auto;
+  margin-right: auto;
+  margin-top: 24px;
+}
+
+.search-field{
+  width: 450px;
+}
+
+.result-card {
+  width: 500px;
+  margin:24px auto;
+  padding:10px;
+}
+
+.ad{
+  font-style: normal;
+  text-decoration: none;
+  color:black;
+}
+
+.category {
+  font-size: 11px;
+  color: gray;
+}
+
+.desc {
+  font-size: 12px;
+}
+
+.price {
+  font-size: 12px;
+}
+
+.location {
+  font-size: 12px;
+  color: brown;
+}
+
+.posted {
+  font-size: 12px;
+}
+
