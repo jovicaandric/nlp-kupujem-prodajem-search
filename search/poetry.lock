@@ -101,6 +101,19 @@ python-versions = ">=2.7"
 version = "0.3"
 
 [[package]]
+category = "main"
+description = "fasttext Python bindings"
+name = "fasttext"
+optional = false
+python-versions = "*"
+version = "0.9.1"
+
+[package.dependencies]
+numpy = "*"
+pybind11 = ">=2.2"
+setuptools = ">=0.7.0"
+
+[[package]]
 category = "dev"
 description = "Read metadata from Python packages"
 marker = "python_version < \"3.8\""
@@ -544,6 +557,14 @@ python-versions = "*"
 version = "0.6.0"
 
 [[package]]
+category = "main"
+description = "Seamless operability between C++11 and Python"
+name = "pybind11"
+optional = false
+python-versions = "*"
+version = "2.5.0"
+
+[[package]]
 category = "dev"
 description = "Pygments is a syntax highlighting package written in Python."
 name = "pygments"
@@ -783,7 +804,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "af814135520a75a11561fa9477cef5ea123930329147e65ec051de6de0c09842"
+content-hash = "61d54435ba703b212b44679bcc274ee23842e91dafbb18e74bfbd022db33a176"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -827,6 +848,10 @@ defusedxml = [
 entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
     {file = "entrypoints-0.3.tar.gz", hash = "sha256:c70dd71abe5a8c85e55e12c19bd91ccfeec11a6e99044204511f9ed547d48451"},
+]
+fasttext = [
+    {file = "fasttext-0.9.1-cp27-cp27m-macosx_10_6_x86_64.whl", hash = "sha256:f79b3447b1612b9b1ad791d4be97db3fecb97762dba01e6fbec389d0d0874772"},
+    {file = "fasttext-0.9.1.tar.gz", hash = "sha256:6ead9c6aafe985472066e27c43e33f581b192befd136a84c3c2e8197e7e05be6"},
 ]
 importlib-metadata = [
     {file = "importlib_metadata-1.6.0-py2.py3-none-any.whl", hash = "sha256:2a688cbaa90e0cc587f1df48bdc97a6eadccdcd9c35fb3f976a09e3b5016d90f"},
@@ -1060,6 +1085,10 @@ prompt-toolkit = [
 ptyprocess = [
     {file = "ptyprocess-0.6.0-py2.py3-none-any.whl", hash = "sha256:d7cc528d76e76342423ca640335bd3633420dc1366f258cb31d05e865ef5ca1f"},
     {file = "ptyprocess-0.6.0.tar.gz", hash = "sha256:923f299cc5ad920c68f2bc0bc98b75b9f838b93b599941a6b63ddbc2476394c0"},
+]
+pybind11 = [
+    {file = "pybind11-2.5.0-py2.py3-none-any.whl", hash = "sha256:205d9f9615eac190811cb8c3c2b2f95f6844ddba0fa0a1d45d00793338741601"},
+    {file = "pybind11-2.5.0.tar.gz", hash = "sha256:ea5a4e7a880112915463826f1acbec5892df36dfe102ecb249229ac514fb54ad"},
 ]
 pygments = [
     {file = "Pygments-2.6.1-py3-none-any.whl", hash = "sha256:ff7a40b4860b727ab48fad6360eb351cc1b33cbf9b15a0f689ca5353e9463324"},

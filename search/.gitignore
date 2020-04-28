@@ -5,6 +5,12 @@ __pycache__/
 # Jupyter checkpoints
 .ipynb_checkpoints/
 
+# Experiment scripts
+exp/
+
 # Data files
 *.json
 *.csv
+
+# Model files
+*.bin
