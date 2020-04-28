@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "parser"
+name = "nlp-kp-search-engine"
 version = "0.1.0"
-description = "The parser for KupujemProdajem.com ads from websocket feed."
+description = "The NLP based search engine for KupujemProdajem.com ads from websocket feed."
 authors = ["Nemanja Milicevic <the.nemanja.milicevic@gmail.com>"]
 license = "MIT"
 
@@ -10,6 +10,7 @@ python = "^3.7"
 beautifulsoup4 = "^4.9.0"
 lxml = "^4.5.0"
 pandas = "^1.0.3"
+fasttext = "^0.9.1"
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.2"
