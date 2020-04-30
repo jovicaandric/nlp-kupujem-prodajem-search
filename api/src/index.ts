@@ -19,6 +19,7 @@ app.options('*', (req, res) => {
 app.get("/search/:query", (req, res) => {
     es.search({
         index: 'kp-nlp-ad-search',
+        size: 10000,
         body: {
             _source: {
                 excludes: ['html']

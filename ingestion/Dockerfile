@@ -8,9 +8,9 @@ WORKDIR /app
 COPY package.json /app
 COPY package-lock.json /app
 RUN npm i
+RUN npm i -g forever
 
 # Bundle app source
 COPY . /app
-RUN npm build
 
 CMD [ "npm", "start" ]

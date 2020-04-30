@@ -23,3 +23,11 @@ ws.on('message', function incoming(data: any) {
         }
     });
 });
+
+ws.on('close', (code, reason) => {
+    console.error("Closing websocket connection ", code, reason);
+})
+
+ws.on('error', (error) => {
+    console.error("An error occurred on websocket ", error);
+})

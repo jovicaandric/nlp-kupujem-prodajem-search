@@ -9,38 +9,31 @@
   </button>
 </form>
 <div class="search-results">
-  <mat-card class="result-card" *ngFor="let result of results">
-    <a target="_blank" style="width: 100%;" href="https://kupujemprodajem.com{{result.url}}"
-      style="text-decoration:none">
-      <table>
-        <tr>
-          <td style="width: 150px;">
-
-            <img *ngIf="result.thumbnail" width="150" src="https://kupujemprodajem.com/{{result.thumbnail}}" />
-            <img *ngIf="!result.thumbnail" width="150"
-              src="https://images.kupujemprodajem.com//images/no_photo100.png" />
-          </td>
-          <td style="width: 250px;">
-            <p class="ad category">{{result.category}} > {{result.subCategory}}</p>
-            <p class="ad name">{{result.name}}</p>
-            <p class="ad desc">{{result.description}}</p>
-          </td>
-          <td style="width: 50px;">
-            <p class="ad price">{{result.price}} {{result.currency}}</p>
-          </td>
-          <td style="width: 50px;">
-            <p class="ad location">{{result.location}}</p>
-            <p class="ad posted">{{result.posted | date:'short'}}</p>
-          </td>
-        </tr>
-      </table>
-
-
-
-
-
-
-
-    </a>
-  </mat-card>
+  <cdk-virtual-scroll-viewport itemSize="150" style="height: 100vh;">
+    <mat-card class="result-card" *cdkVirtualFor="let result of results" style="height: 150px;">
+      <a target="_blank" style="width: 100%;" href="https://kupujemprodajem.com{{result.url}}"
+        style="text-decoration:none">
+        <div fxLayout="column">
+          <div fxLayout="row">
+            <div fxFlex="150px">
+              <img *ngIf="result.thumbnail" src="https://kupujemprodajem.com/{{result.thumbnail}}" />
+              <img *ngIf="!result.thumbnail" src="https://images.kupujemprodajem.com//images/no_photo100.png" />
+            </div>
+            <div fxFlex="300px" style="padding:10px;">
+              <p class="ad category">{{result.category}} > {{result.subCategory}}</p>
+              <p class="ad name">{{result.name}}</p>
+              <p class="ad desc">{{result.description}}</p>
+            </div>
+            <div fxFlex="100px">
+              <p class="ad price">{{result.price}} {{result.currency}}</p>
+            </div>
+            <div fxFlex="100px">
+              <p class="ad location">{{result.location}}</p>
+              <p class="ad posted">{{result.posted | date:'short'}}</p>
+            </div>
+          </div>
+        </div>
+      </a>
+    </mat-card>
+  </cdk-virtual-scroll-viewport>
 </div>
