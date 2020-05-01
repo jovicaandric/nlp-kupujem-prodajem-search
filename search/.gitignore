@@ -11,6 +11,8 @@ exp/
 # Data files
 *.json
 *.csv
+*.txt
 
 # Model files
 *.bin
+*.vec
