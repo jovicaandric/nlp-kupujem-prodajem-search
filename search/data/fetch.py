@@ -7,17 +7,18 @@ processing and feature transformation.
 """
 import logging
 import os
+from typing import List, Tuple
 
 import click
 import pandas as pd
 from elasticsearch import Elasticsearch, exceptions
 from elasticsearch.helpers import scan
 
+import paths
+
 
 logger = logging.getLogger(name=__name__)
 
-
-DATA_DIR = os.path.dirname(os.path.abspath(__file__))
 
 COLUMNS = [
     "id",
@@ -40,12 +41,18 @@ def _init_elasticsearch_client(host: str) -> Elasticsearch:
 
     try:
         client = Elasticsearch(host)
-        info = client.info()
-        logger.info(f"Connected to elasticsearch server: {info}")
+        client.info()
     except exceptions.ConnectionError:
         logger.error(f"Failed to connect to elasticsearch server at '{host}'")
 
     return client
+
+
+def _get_latest_ad() -> Tuple[str, str]:
+    ads_df = pd.read_csv(paths.RAW_ADS_FILE, usecols=["id", "posted_at"])
+    ad_timestamp = ads_df.iloc[-1].posted_at
+    ad_id = ads_df.iloc[-1].id
+    return str(ad_id), ad_timestamp
 
 
 @click.command()
@@ -62,39 +69,63 @@ def fetch(es_host: str, index: str, size: int) -> None:
     """Fetch ad documents from elasticsearch ES_HOST and INDEX.
 
     Documents are saved in 'data/raw/ads.csv' CSV file with rows sorted by
-    'posted_at' timestamp.
+    'posted_at' timestamp. If some documents are previously saved, only newer
+    documents will be fetched and appended to CSV file.
 
     """
     client = _init_elasticsearch_client(host=es_host)
 
+    # Fetch only ads that are newer than the most recent ad previously saved.
+    ad_id, ad_timestamp = _get_latest_ad()
+    search_query = {
+        "query": {
+            "bool": {
+                "must_not": {"term": {"id": ad_id}},
+                "filter": {"range": {"posted": {"gte": ad_timestamp}}},
+            }
+        }
+    }
+
     try:
-        count_response = client.count(index=index)
+        count_response = client.count(index=index, body=search_query)
         docs_count = count_response["count"]
-        logger.info(f"Found total {docs_count} ads in '{index}' index")
+        logger.info(f"Found total {docs_count} new documents in '{index}' index")
 
-        docs = [
+        docs: List[dict] = [
             doc["_source"]
-            for doc in scan(client, index=index, size=size, _source_excludes=["html"])
+            for doc in scan(
+                client,
+                index=index,
+                query=search_query,
+                size=size,
+                _source_excludes=["html"],
+            )
         ]
-
-        ads_df = pd.DataFrame(docs)
-        ads_df.rename(
-            columns={
-                "subCategory": "sub_category",
-                "lon": "longitude",
-                "lat": "latitude",
-                "posted": "posted_at",
-            },
-            inplace=True,
-        )
-        ads_df = ads_df[COLUMNS]  # Change column order.
-        ads_df.sort_values(by=["posted_at"])
-
-        output_file = os.path.join(DATA_DIR, "raw", "ads.csv")
-        ads_df.to_csv(output_file, index=False)
-        logger.info(f"Saved {len(docs)} ad docs to '{output_file}'")
     except exceptions.ElasticsearchException as e:
         logger.error(str(e))
+        return
+
+    ads_df = pd.DataFrame(docs)
+    ads_df.rename(
+        columns={
+            "subCategory": "sub_category",
+            "lon": "longitude",
+            "lat": "latitude",
+            "posted": "posted_at",
+        },
+        inplace=True,
+    )
+    ads_df = ads_df[COLUMNS]  # Change column order.
+    ads_df.sort_values(by=["posted_at"])
+
+    out_file = paths.RAW_ADS_FILE
+
+    if os.path.exists(out_file):
+        ads_df.to_csv(out_file, index=False, header=False, mode="a")
+    else:
+        ads_df.to_csv(out_file, index=False)
+
+    logger.info(f"Saved {len(docs)} ad docs to '{out_file}'")
 
 
 if __name__ == "__main__":
