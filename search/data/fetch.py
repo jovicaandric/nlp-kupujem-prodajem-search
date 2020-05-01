@@ -31,7 +31,6 @@ COLUMNS = [
     "location",
     "latitude",
     "longitude",
-    "thumbnail",
     "posted_at",
 ]
 
@@ -63,7 +62,7 @@ def _get_latest_ad() -> Tuple[str, str]:
     type=int,
     default=10_000,
     show_default=True,
-    help="Size (per shard) of the batch send at each iteration for elasticsearch scroll API",
+    help="Size of the batch send at each iteration for elasticsearch scroll API",
 )
 def fetch(es_host: str, index: str, size: int) -> None:
     """Fetch ad documents from elasticsearch ES_HOST and INDEX.
@@ -75,16 +74,19 @@ def fetch(es_host: str, index: str, size: int) -> None:
     """
     client = _init_elasticsearch_client(host=es_host)
 
-    # Fetch only ads that are newer than the most recent ad previously saved.
-    ad_id, ad_timestamp = _get_latest_ad()
-    search_query = {
-        "query": {
-            "bool": {
-                "must_not": {"term": {"id": ad_id}},
-                "filter": {"range": {"posted": {"gte": ad_timestamp}}},
+    if os.path.exists(paths.RAW_ADS_FILE):
+        # Fetch only ads that are newer than the most recent ad previously saved.
+        ad_id, ad_timestamp = _get_latest_ad()
+        search_query = {
+            "query": {
+                "bool": {
+                    "must_not": {"term": {"id": ad_id}},
+                    "filter": {"range": {"posted": {"gte": ad_timestamp}}},
+                }
             }
         }
-    }
+    else:
+        search_query = {"query": {"match_all": {}}}
 
     try:
         count_response = client.count(index=index, body=search_query)
@@ -98,7 +100,7 @@ def fetch(es_host: str, index: str, size: int) -> None:
                 index=index,
                 query=search_query,
                 size=size,
-                _source_excludes=["html"],
+                _source_excludes=["html", "thumbnail"],
             )
         ]
     except exceptions.ElasticsearchException as e:
