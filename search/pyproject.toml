@@ -7,10 +7,11 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-beautifulsoup4 = "^4.9.0"
 lxml = "^4.5.0"
 pandas = "^1.0.3"
 fasttext = "^0.9.1"
+elasticsearch = "^7.6.0"
+click = "^7.1.2"
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.2"
