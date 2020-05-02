@@ -3,6 +3,7 @@ import multiprocessing as mp
 
 import click
 import fasttext
+import numpy as np
 
 import paths
 
@@ -20,6 +21,42 @@ LEARNING_RATE = 0.025
 LOSS = "ns"
 MIN_WORD_COUNT = 3
 MODEL = "skipgram"
+
+
+def _create_vec_model(model) -> np.ndarray:
+    word_vectors = np.zeros((len(model.words), model.get_dimension() + 1), dtype=object)
+
+    for idx, word in enumerate(model.words):
+        vector = model.get_word_vector(word)
+        word_vectors[idx][0] = word
+        word_vectors[idx][1:] = vector
+
+    return word_vectors
+
+
+def _save_model(model) -> None:
+    dim = model.get_dimension()
+
+    bin_model_file = paths.fasttext_model_file(dim, extension="bin")
+    model.save_model(bin_model_file)
+
+    logger.info(f"Binary model saved to '{bin_model_file}'")
+
+    vec_model = _create_vec_model(model)
+    vec_model_file = paths.fasttext_model_file(dim, extension="vec")
+
+    num_words = len(model.words)
+
+    np.savetxt(
+        vec_model_file,
+        vec_model,
+        header=f"{num_words} {dim}",
+        fmt=["%s"] + ["%.12e"] * dim,
+        delimiter=" ",
+        comments="",
+    )
+
+    logger.info(f"Vector model saved to '{vec_model_file}'")
 
 
 @click.command()
@@ -81,12 +118,10 @@ def train(
     print()
 
     model = fasttext.train_unsupervised(paths.PROCESSED_ADS_FILE, **kwargs)
-    model_file = paths.fasttext_model_file(dim)
-    model.save_model(model_file)
 
     print()
 
-    logger.info(f"Model saved to '{model_file}'")
+    _save_model(model)
 
 
 if __name__ == "__main__":

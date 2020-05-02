@@ -10,5 +10,5 @@ PROCESSED_ADS_FILE = os.path.join(DATA_DIR, "processed", "ads.txt")
 MODELS_DIR = os.path.join(ROOT_DIR, "models")
 
 
-def fasttext_model_file(dim: int) -> str:
-    return os.path.join(MODELS_DIR, f"ads.{dim}.bin")
+def fasttext_model_file(dim: int, extension: str) -> str:
+    return os.path.join(MODELS_DIR, f"ads.{dim}.{extension}")
