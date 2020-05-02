@@ -8,11 +8,7 @@ import numpy as np
 import paths
 
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s %(module)s %(levelname)s: %(message)s"
-)
-
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("analyzer.wv.train")
 
 
 EMBEDDING_DIM = 128

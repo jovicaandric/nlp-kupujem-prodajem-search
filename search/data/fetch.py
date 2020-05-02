@@ -17,7 +17,7 @@ from elasticsearch.helpers import scan
 import paths
 
 
-logger = logging.getLogger(name=__name__)
+logger = logging.getLogger("data.fetch")
 
 
 COLUMNS = [

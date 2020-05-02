@@ -10,7 +10,7 @@ from pandarallel import pandarallel
 import paths
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("data.transform")
 
 pandarallel.initialize()
 
