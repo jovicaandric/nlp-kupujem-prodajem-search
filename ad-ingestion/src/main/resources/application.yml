@@ -1,0 +1,14 @@
+kafka:
+  consumer:
+    ad:
+      topic: ad-topic
+      servers: ${KAFKA_HOST:localhost:9092}
+      keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+      valueDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+      consumerGroup: ad-ingestion-1
+      poolTimeout: 1000
+      offsetReset: earliest
+elasticsearch:
+  hostname: ${ELASTICSEARCH_HOST:localhost}
+  port: 9200
+  index: kp-nlp-ad-search
