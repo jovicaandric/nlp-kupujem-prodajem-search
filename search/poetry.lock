@@ -87,6 +87,17 @@ version = "0.6.0"
 
 [[package]]
 category = "main"
+description = "serialize all of python"
+name = "dill"
+optional = false
+python-versions = ">=2.6, !=3.0.*"
+version = "0.3.1.1"
+
+[package.extras]
+graph = ["objgraph (>=1.7.2)"]
+
+[[package]]
+category = "main"
 description = "Python client for Elasticsearch"
 name = "elasticsearch"
 optional = false
@@ -481,6 +492,17 @@ version = "1.18.3"
 
 [[package]]
 category = "main"
+description = "An easy to use library to speed up computation (by parallelizing on multi CPUs) with pandas."
+name = "pandarallel"
+optional = false
+python-versions = ">=3.5"
+version = "1.4.8"
+
+[package.dependencies]
+dill = "*"
+
+[[package]]
+category = "main"
 description = "Powerful data structures for data analysis, time series, and statistics"
 name = "pandas"
 optional = false
@@ -818,7 +840,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "11028ea4ee3da21bb8adf7f687e8e2b6d6cf5e8836de622e08873fcd15751e8b"
+content-hash = "90a3393abe23f4967de3aa029049e1d3fce9944a34e52bbcec3ab5bd12b51276"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -857,6 +879,9 @@ decorator = [
 defusedxml = [
     {file = "defusedxml-0.6.0-py2.py3-none-any.whl", hash = "sha256:6687150770438374ab581bb7a1b327a847dd9c5749e396102de3fad4e8a3ef93"},
     {file = "defusedxml-0.6.0.tar.gz", hash = "sha256:f684034d135af4c6cbb949b8a4d2ed61634515257a67299e5f940fbaa34377f5"},
+]
+dill = [
+    {file = "dill-0.3.1.1.tar.gz", hash = "sha256:42d8ef819367516592a825746a18073ced42ca169ab1f5f4044134703e7a049c"},
 ]
 elasticsearch = [
     {file = "elasticsearch-7.6.0-py2.py3-none-any.whl", hash = "sha256:f4bb05cfe55cf369bdcb4d86d0129d39d66a91fd9517b13cd4e4231fbfcf5c81"},
@@ -1058,6 +1083,9 @@ numpy = [
     {file = "numpy-1.18.3-cp38-cp38-win32.whl", hash = "sha256:99f0ba97e369f02a21bb95faa3a0de55991fd5f0ece2e30a9e2eaebeac238921"},
     {file = "numpy-1.18.3-cp38-cp38-win_amd64.whl", hash = "sha256:c60175d011a2e551a2f74c84e21e7c982489b96b6a5e4b030ecdeacf2914da68"},
     {file = "numpy-1.18.3.zip", hash = "sha256:e46e2384209c91996d5ec16744234d1c906ab79a701ce1a26155c9ec890b8dc8"},
+]
+pandarallel = [
+    {file = "pandarallel-1.4.8.tar.gz", hash = "sha256:40b34f06991b361a4b1536183e07641b4cd84c6942dfea7c6fa74e997f07c7cc"},
 ]
 pandas = [
     {file = "pandas-1.0.3-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:d234bcf669e8b4d6cbcd99e3ce7a8918414520aeb113e2a81aeb02d0a533d7f7"},
