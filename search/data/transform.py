@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import List, Tuple
+from typing import Tuple
 
 import click
 import numpy as np
@@ -80,14 +80,11 @@ def _make_ad_text_lines(ads_df: pd.DataFrame) -> None:
     logger.info(f"Transformed ads saved to '{paths.PROCESSED_ADS_FILE}'")
 
 
-def _convert_ad_to_category_classification_sample(
-    ad: pd.Series,
-) -> List[Tuple[str, str]]:
+def _convert_ad_to_category_classification_sample(ad: pd.Series,) -> Tuple[str, str]:
     name = _remove_non_text_chars(ad["name"])
     description = _remove_non_text_chars(ad["description"])
-    sub_category = _remove_non_text_chars(ad["sub_category"])
 
-    sample = f"{name} {sub_category} {description}"
+    sample = f"{name} {description}"
     sample = _remove_redundant_whitespaces(sample)
     sample = sample.lower()
     label = ad.category.lower()
@@ -96,11 +93,27 @@ def _convert_ad_to_category_classification_sample(
 
 
 def _make_category_classification_samples(ads_df: pd.DataFrame) -> None:
-    samples = ads_df.parallel_apply(
+    ad_samples = ads_df.parallel_apply(
         _convert_ad_to_category_classification_sample, axis=1
     )
 
+    # Make (sub_category, category) dataset pairs.
+    sub_category_samples = (
+        ads_df[["sub_category", "category"]]
+        .drop_duplicates()
+        .parallel_apply(
+            lambda row: (
+                _remove_non_text_chars(row.sub_category).lower(),
+                row.category.lower(),
+            ),
+            axis=1,
+        )
+    )
+
+    samples = ad_samples.append(sub_category_samples, ignore_index=True)
+
     ad_category_df = pd.DataFrame.from_records(samples, columns=["sample", "label"])
+    ad_category_df = ad_category_df.sample(frac=1)
     ad_category_df.to_csv(paths.CATEGORY_CLASSIFICATION_FILE, index=False)
 
     logger.info(

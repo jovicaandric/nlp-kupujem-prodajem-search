@@ -13,6 +13,7 @@ fasttext = "^0.9.1"
 elasticsearch = "^7.6.0"
 click = "^7.1.2"
 pandarallel = "^1.4.8"
+numpy = "^1.18.3"
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.2"
