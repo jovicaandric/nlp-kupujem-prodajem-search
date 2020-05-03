@@ -1,4 +1,5 @@
 RAW_DATA = data/raw
+INTERIM_DATA = data/interim
 PROCESSED_DATA = data/processed
 MODELS = models
 
@@ -14,8 +15,11 @@ transform: fetch
 
 train: transform
 	python -m analyzer.wv.train
+	python -m analyzer.category.transform
+	python -m analyzer.category.train
 
 clean:
 	rm $(RAW_DATA)/*
+	rm $(INTERIM_DATA)/*
 	rm $(PROCESSED_DATA)/*
 	rm $(MODELS)/*

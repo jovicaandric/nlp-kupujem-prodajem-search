@@ -20,6 +20,8 @@ LEARNING_RATE = 0.1
 LOSS = "ns"
 MIN_WORD_COUNT = 2
 MODEL = "skipgram"
+NEGATIVE_SAMPLES = 5
+WINDOW_SIZE = 5
 
 
 def _save_model(model) -> None:
@@ -50,6 +52,15 @@ def _save_model(model) -> None:
     help="Minimal number of word occurrences.",
 )
 @click.option(
+    "--window_size", type=int, default=WINDOW_SIZE, help="Size of the context window.",
+)
+@click.option(
+    "--negative_samples",
+    type=int,
+    default=NEGATIVE_SAMPLES,
+    help="Number of negative samples.",
+)
+@click.option(
     "--lr",
     type=float,
     default=LEARNING_RATE,
@@ -67,6 +78,8 @@ def train(
     dim: int,
     epochs: int,
     min_word_count: int,
+    window_size: int,
+    negative_samples: int,
     lr: float,
     threads: int,
 ) -> None:
@@ -85,9 +98,11 @@ def train(
         "min_count": min_word_count,
         "lr": lr,
         "thread": threads,
+        "ws": 10,
+        "neg": negative_samples,
     }
 
-    logger.info(f"Starting fastText training on '{paths.PROCESSED_ADS_FILE}'")
+    logger.info(f"Starting fastText training on '{paths.PROCESSED_ADS_PATH}'")
     logger.info(f"Training args: {kwargs}")
 
     print()

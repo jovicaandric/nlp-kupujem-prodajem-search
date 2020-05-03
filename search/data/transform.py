@@ -77,7 +77,7 @@ def _make_ad_text_lines(ads_df: pd.DataFrame) -> None:
     with open(paths.PROCESSED_ADS_PATH, "w") as fp:
         fp.writelines("\n".join(lines))
 
-    logger.info(f"Transformed ads saved to '{paths.PROCESSED_ADS_FILE}'")
+    logger.info(f"Transformed ads saved to '{paths.PROCESSED_ADS_PATH}'")
 
 
 def _convert_ad_to_category_classification_sample(ad: pd.Series,) -> Tuple[str, str]:
@@ -117,7 +117,7 @@ def _make_category_classification_samples(ads_df: pd.DataFrame) -> None:
     ad_category_df.to_csv(paths.CATEGORY_DATA_PATH, index=False)
 
     logger.info(
-        f"Ad category classification dataset saved to '{paths.CATEGORY_CLASSIFIER_DATASET_FILE}'"
+        f"Ad category classification dataset saved to '{paths.CATEGORY_DATA_PATH}'"
     )
 
 

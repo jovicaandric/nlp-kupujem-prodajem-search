@@ -91,6 +91,11 @@ def fetch(es_host: str, index: str, size: int) -> None:
     try:
         count_response = client.count(index=index, body=search_query)
         docs_count = count_response["count"]
+
+        if not docs_count:
+            logger.info(f"No new documents found in '{index}' index")
+            return
+
         logger.info(f"Found total {docs_count} new documents in '{index}' index")
 
         docs: List[dict] = [
@@ -104,7 +109,7 @@ def fetch(es_host: str, index: str, size: int) -> None:
             )
         ]
     except exceptions.ElasticsearchException as e:
-        logger.error(str(e))
+        logger.error(f"Elasticsearch exception: {e}", exc_info=True)
         return
 
     ads_df = pd.DataFrame(docs)
