@@ -4,9 +4,9 @@ from functools import partial
 
 import click
 import fasttext
-import numpy as np
 
 import paths
+from analyzer.utils import save_vec_model
 
 
 click.option = partial(click.option, show_default=True)
@@ -14,48 +14,24 @@ click.option = partial(click.option, show_default=True)
 logger = logging.getLogger("analyzer.wv.train")
 
 
-EMBEDDING_DIM = 256
+EMBEDDING_DIM = 128
 EPOCHS = 30
-LEARNING_RATE = 0.075
+LEARNING_RATE = 0.1
 LOSS = "ns"
-MIN_WORD_COUNT = 3
+MIN_WORD_COUNT = 2
 MODEL = "skipgram"
-
-
-def _create_vec_model(model) -> np.ndarray:
-    word_vectors = np.zeros((len(model.words), model.get_dimension() + 1), dtype=object)
-
-    for idx, word in enumerate(model.words):
-        vector = model.get_word_vector(word)
-        word_vectors[idx][0] = word
-        word_vectors[idx][1:] = vector
-
-    return word_vectors
 
 
 def _save_model(model) -> None:
     dim = model.get_dimension()
 
-    bin_model_file = paths.fasttext_model_file(dim, extension="bin")
+    bin_model_file = paths.fasttext_model_file(module="wv", dim=dim, extension="bin")
     model.save_model(bin_model_file)
+    logger.info(f"Ads word vector binary model saved to '{bin_model_file}'")
 
-    logger.info(f"Binary model saved to '{bin_model_file}'")
-
-    vec_model = _create_vec_model(model)
-    vec_model_file = paths.fasttext_model_file(dim, extension="vec")
-
-    num_words = len(model.words)
-
-    np.savetxt(
-        vec_model_file,
-        vec_model,
-        header=f"{num_words} {dim}",
-        fmt=["%s"] + ["%.12e"] * dim,
-        delimiter=" ",
-        comments="",
-    )
-
-    logger.info(f"Vector model saved to '{vec_model_file}'")
+    vec_model_file = paths.fasttext_model_file(module="wv", dim=dim, extension="vec")
+    save_vec_model(model, path=vec_model_file)
+    logger.info(f"Ads word vector vector model saved to '{vec_model_file}'")
 
 
 @click.command()
@@ -97,7 +73,7 @@ def train(
     """Train word vectors on ads data.
 
     Word vectors are trained with fastText library. Trained word vectors are
-    saved to 'models/ads.{dim}.vec' and binary model to 'models/ads.{dim}.bin'.
+    saved to 'models/ads.wv.{dim}.vec' and binary model to 'models/ads.wv.{dim}.bin'.
 
     """
 

@@ -21,9 +21,9 @@ logger = logging.getLogger("analyzer.category.train_tf")
 
 TrainTestSplit = Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]
 
-MAX_NUM_WORDS = 64_000
+MAX_NUM_WORDS = 100_000
 MAX_SEQUENCE_LEN = 35
-EMBEDDING_DIM = 256
+EMBEDDING_DIM = 128
 
 
 class CategoryLabelEncoder:
@@ -84,9 +84,13 @@ def split_dataset(data: np.ndarray, test_size: float = 0.25) -> TrainTestSplit:
 
 
 def load_embedding_index(embedding_dim: int) -> Dict[str, np.ndarray]:
+    word_vectors_path = paths.fasttext_model_file(
+        module="wv", dim=embedding_dim, extension="vec"
+    )
+
     embeddings_index = {}
 
-    with open(paths.fasttext_model_file(embedding_dim, "vec"), "r") as fp:
+    with open(word_vectors_path, "r") as fp:
         for line in fp:
             values = line.split()
 
@@ -136,7 +140,7 @@ def create_model(
                 embedding_dim,
                 weights=embedding_weights,
                 input_length=sequence_length,
-                trainable=False,
+                trainable=True,
             ),
             tf.keras.layers.Bidirectional(tf.keras.layers.GRU(recurrent_units)),
             tf.keras.layers.Dense(dense_units, activation="relu"),

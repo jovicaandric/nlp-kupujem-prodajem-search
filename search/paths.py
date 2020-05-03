@@ -15,5 +15,5 @@ MODELS_DIR = os.path.join(ROOT_DIR, "models")
 TOKENIZER_PATH = os.path.join(MODELS_DIR, "tokenizer.pkl")
 
 
-def fasttext_model_file(dim: int, extension: str) -> str:
-    return os.path.join(MODELS_DIR, f"ads.{dim}.{extension}")
+def fasttext_model_file(module: str, dim: int, extension: str) -> str:
+    return os.path.join(MODELS_DIR, f"ads.{module}.{dim}.{extension}")
