@@ -48,7 +48,7 @@ def _init_elasticsearch_client(host: str) -> Elasticsearch:
 
 
 def _get_latest_ad() -> Tuple[str, str]:
-    ads_df = pd.read_csv(paths.RAW_ADS_FILE, usecols=["id", "posted_at"])
+    ads_df = pd.read_csv(paths.RAW_ADS_PATH, usecols=["id", "posted_at"])
     ad_timestamp = ads_df.iloc[-1].posted_at
     ad_id = ads_df.iloc[-1].id
     return str(ad_id), ad_timestamp
@@ -74,7 +74,7 @@ def fetch(es_host: str, index: str, size: int) -> None:
     """
     client = _init_elasticsearch_client(host=es_host)
 
-    if os.path.exists(paths.RAW_ADS_FILE):
+    if os.path.exists(paths.RAW_ADS_PATH):
         # Fetch only ads that are newer than the most recent ad previously saved.
         ad_id, ad_timestamp = _get_latest_ad()
         search_query = {
@@ -120,7 +120,7 @@ def fetch(es_host: str, index: str, size: int) -> None:
     ads_df = ads_df[COLUMNS]  # Change column order.
     ads_df.sort_values(by=["posted_at"])
 
-    out_file = paths.RAW_ADS_FILE
+    out_file = paths.RAW_ADS_PATH
 
     if os.path.exists(out_file):
         ads_df.to_csv(out_file, index=False, header=False, mode="a")

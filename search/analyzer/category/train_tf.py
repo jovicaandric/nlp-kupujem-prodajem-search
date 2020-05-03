@@ -177,7 +177,7 @@ def train(embedding_dim: int, max_num_words: int, max_sequence_len: int) -> None
     various recurrent models perform better than baseline fastText models.
 
     """
-    cat_df = pd.read_csv(paths.CATEGORY_CLASSIFIER_DATASET_FILE)
+    cat_df = pd.read_csv(paths.CATEGORY_DATA_PATH)
     cat_df.dropna(inplace=True)
     cat_df = cat_df.sample(frac=1)
 

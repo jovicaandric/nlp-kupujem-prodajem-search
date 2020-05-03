@@ -74,7 +74,7 @@ def _convert_ad_to_text_line(ad: pd.Series) -> str:
 def _make_ad_text_lines(ads_df: pd.DataFrame) -> None:
     lines = ads_df.parallel_apply(_convert_ad_to_text_line, axis=1)
 
-    with open(paths.PROCESSED_ADS_FILE, "w") as fp:
+    with open(paths.PROCESSED_ADS_PATH, "w") as fp:
         fp.writelines("\n".join(lines))
 
     logger.info(f"Transformed ads saved to '{paths.PROCESSED_ADS_FILE}'")
@@ -114,7 +114,7 @@ def _make_category_classification_samples(ads_df: pd.DataFrame) -> None:
 
     ad_category_df = pd.DataFrame.from_records(samples, columns=["sample", "label"])
     ad_category_df = ad_category_df.sample(frac=1)
-    ad_category_df.to_csv(paths.CATEGORY_CLASSIFIER_DATASET_FILE, index=False)
+    ad_category_df.to_csv(paths.CATEGORY_DATA_PATH, index=False)
 
     logger.info(
         f"Ad category classification dataset saved to '{paths.CATEGORY_CLASSIFIER_DATASET_FILE}'"
@@ -132,7 +132,7 @@ def transform() -> None:
     Transformed, processed lines are saved to 'data/processed/ads.txt'.
 
     """
-    ads_df = pd.read_csv(paths.RAW_ADS_FILE)
+    ads_df = pd.read_csv(paths.RAW_ADS_PATH)
     ads_df.fillna("", inplace=True)
 
     logger.info(f"Loaded {ads_df.shape[0]} ads")

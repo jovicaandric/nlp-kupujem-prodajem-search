@@ -116,7 +116,7 @@ def train(
 
     print()
 
-    model = fasttext.train_unsupervised(paths.PROCESSED_ADS_FILE, **kwargs)
+    model = fasttext.train_unsupervised(paths.PROCESSED_ADS_PATH, **kwargs)
 
     print()
 
