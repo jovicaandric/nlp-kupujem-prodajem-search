@@ -1,62 +1,39 @@
 import logging
 import multiprocessing as mp
+from functools import partial
 
 import click
 import fasttext
-import numpy as np
 
 import paths
+from analyzer.utils import save_vec_model
 
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s %(module)s %(levelname)s: %(message)s"
-)
+click.option = partial(click.option, show_default=True)
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("analyzer.wv.train")
 
 
 EMBEDDING_DIM = 128
-EPOCHS = 20
-LEARNING_RATE = 0.025
+EPOCHS = 30
+LEARNING_RATE = 0.1
 LOSS = "ns"
-MIN_WORD_COUNT = 3
+MIN_WORD_COUNT = 2
 MODEL = "skipgram"
-
-
-def _create_vec_model(model) -> np.ndarray:
-    word_vectors = np.zeros((len(model.words), model.get_dimension() + 1), dtype=object)
-
-    for idx, word in enumerate(model.words):
-        vector = model.get_word_vector(word)
-        word_vectors[idx][0] = word
-        word_vectors[idx][1:] = vector
-
-    return word_vectors
+NEGATIVE_SAMPLES = 5
+WINDOW_SIZE = 5
 
 
 def _save_model(model) -> None:
     dim = model.get_dimension()
 
-    bin_model_file = paths.fasttext_model_file(dim, extension="bin")
+    bin_model_file = paths.fasttext_model_file(module="wv", dim=dim, extension="bin")
     model.save_model(bin_model_file)
+    logger.info(f"Ads word vector binary model saved to '{bin_model_file}'")
 
-    logger.info(f"Binary model saved to '{bin_model_file}'")
-
-    vec_model = _create_vec_model(model)
-    vec_model_file = paths.fasttext_model_file(dim, extension="vec")
-
-    num_words = len(model.words)
-
-    np.savetxt(
-        vec_model_file,
-        vec_model,
-        header=f"{num_words} {dim}",
-        fmt=["%s"] + ["%.12e"] * dim,
-        delimiter=" ",
-        comments="",
-    )
-
-    logger.info(f"Vector model saved to '{vec_model_file}'")
+    vec_model_file = paths.fasttext_model_file(module="wv", dim=dim, extension="vec")
+    save_vec_model(model, path=vec_model_file)
+    logger.info(f"Ads word vector vector model saved to '{vec_model_file}'")
 
 
 @click.command()
@@ -73,6 +50,15 @@ def _save_model(model) -> None:
     type=int,
     default=MIN_WORD_COUNT,
     help="Minimal number of word occurrences.",
+)
+@click.option(
+    "--window_size", type=int, default=WINDOW_SIZE, help="Size of the context window.",
+)
+@click.option(
+    "--negative_samples",
+    type=int,
+    default=NEGATIVE_SAMPLES,
+    help="Number of negative samples.",
 )
 @click.option(
     "--lr",
@@ -92,13 +78,15 @@ def train(
     dim: int,
     epochs: int,
     min_word_count: int,
+    window_size: int,
+    negative_samples: int,
     lr: float,
     threads: int,
 ) -> None:
     """Train word vectors on ads data.
 
     Word vectors are trained with fastText library. Trained word vectors are
-    saved to 'models/ads.{dim}.bin'.
+    saved to 'models/ads.wv.{dim}.vec' and binary model to 'models/ads.wv.{dim}.bin'.
 
     """
 
@@ -110,14 +98,16 @@ def train(
         "min_count": min_word_count,
         "lr": lr,
         "thread": threads,
+        "ws": 10,
+        "neg": negative_samples,
     }
 
-    logger.info(f"Starting fastText training on '{paths.PROCESSED_ADS_FILE}'")
+    logger.info(f"Starting fastText training on '{paths.PROCESSED_ADS_PATH}'")
     logger.info(f"Training args: {kwargs}")
 
     print()
 
-    model = fasttext.train_unsupervised(paths.PROCESSED_ADS_FILE, **kwargs)
+    model = fasttext.train_unsupervised(paths.PROCESSED_ADS_PATH, **kwargs)
 
     print()
 

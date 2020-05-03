@@ -12,6 +12,8 @@ exp/
 *.json
 *.csv
 *.txt
+*.train
+*.test
 
 # Model files
 *.bin

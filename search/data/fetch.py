@@ -17,7 +17,7 @@ from elasticsearch.helpers import scan
 import paths
 
 
-logger = logging.getLogger(name=__name__)
+logger = logging.getLogger("data.fetch")
 
 
 COLUMNS = [
@@ -48,7 +48,7 @@ def _init_elasticsearch_client(host: str) -> Elasticsearch:
 
 
 def _get_latest_ad() -> Tuple[str, str]:
-    ads_df = pd.read_csv(paths.RAW_ADS_FILE, usecols=["id", "posted_at"])
+    ads_df = pd.read_csv(paths.RAW_ADS_PATH, usecols=["id", "posted_at"])
     ad_timestamp = ads_df.iloc[-1].posted_at
     ad_id = ads_df.iloc[-1].id
     return str(ad_id), ad_timestamp
@@ -74,7 +74,7 @@ def fetch(es_host: str, index: str, size: int) -> None:
     """
     client = _init_elasticsearch_client(host=es_host)
 
-    if os.path.exists(paths.RAW_ADS_FILE):
+    if os.path.exists(paths.RAW_ADS_PATH):
         # Fetch only ads that are newer than the most recent ad previously saved.
         ad_id, ad_timestamp = _get_latest_ad()
         search_query = {
@@ -91,6 +91,11 @@ def fetch(es_host: str, index: str, size: int) -> None:
     try:
         count_response = client.count(index=index, body=search_query)
         docs_count = count_response["count"]
+
+        if not docs_count:
+            logger.info(f"No new documents found in '{index}' index")
+            return
+
         logger.info(f"Found total {docs_count} new documents in '{index}' index")
 
         docs: List[dict] = [
@@ -104,7 +109,7 @@ def fetch(es_host: str, index: str, size: int) -> None:
             )
         ]
     except exceptions.ElasticsearchException as e:
-        logger.error(str(e))
+        logger.error(f"Elasticsearch exception: {e}", exc_info=True)
         return
 
     ads_df = pd.DataFrame(docs)
@@ -120,7 +125,7 @@ def fetch(es_host: str, index: str, size: int) -> None:
     ads_df = ads_df[COLUMNS]  # Change column order.
     ads_df.sort_values(by=["posted_at"])
 
-    out_file = paths.RAW_ADS_FILE
+    out_file = paths.RAW_ADS_PATH
 
     if os.path.exists(out_file):
         ads_df.to_csv(out_file, index=False, header=False, mode="a")
