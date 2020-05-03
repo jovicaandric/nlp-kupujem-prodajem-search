@@ -64,8 +64,14 @@ $ python -m analyzer.server
 Hot reloading and debuggin is enabled by setting environment variable
 `FLASK_ENV=development`.
 
-This simple HTTP server exposes an endpoint for user's search query analysis
-that returns compiled elasticsearch query:
+Start a `gunicorn` server with _n_ workers on port `5000` with
+
+```
+$ gunicorn -w <n> -b :5000 analyzer.wsgi:app
+```
+
+Search query analyzer HTTP server exposes an endpoint for user's search query
+analysis that returns compiled elasticsearch query:
 
 ```yaml
 /analyzer:
