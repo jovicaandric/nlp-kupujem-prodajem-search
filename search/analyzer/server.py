@@ -19,8 +19,8 @@ def _clean_search_query(query: str) -> str:
     return clean_query
 
 
-@app.route("/analyze", methods=["POST"])
-def analyze():
+@app.route("/analyzer", methods=["POST"])
+def analyzer():
     if not request.data:
         return "Missing request body", 400
 
@@ -35,10 +35,14 @@ def analyze():
     if not query:
         return "Search query is empty", 400
 
+    app.logger.info(f"User submitted search query: {query}")
+
     es_query = es_query_builder.build(user_search_query=query)
 
-    return jsonify({"query": es_query})
+    app.logger.info(f"Compiled elasticsearch query: {es_query}")
+
+    return jsonify(es_query)
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
