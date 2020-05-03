@@ -13,7 +13,7 @@ transform: fetch
 	python -m data.transform
 
 train: transform
-	python -m train
+	python -m analyzer.wv.train
 
 clean:
 	rm $(RAW_DATA)/*

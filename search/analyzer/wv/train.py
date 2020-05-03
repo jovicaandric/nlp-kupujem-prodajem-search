@@ -1,5 +1,6 @@
 import logging
 import multiprocessing as mp
+from functools import partial
 
 import click
 import fasttext
@@ -8,12 +9,14 @@ import numpy as np
 import paths
 
 
+click.option = partial(click.option, show_default=True)
+
 logger = logging.getLogger("analyzer.wv.train")
 
 
-EMBEDDING_DIM = 128
-EPOCHS = 20
-LEARNING_RATE = 0.025
+EMBEDDING_DIM = 256
+EPOCHS = 30
+LEARNING_RATE = 0.075
 LOSS = "ns"
 MIN_WORD_COUNT = 3
 MODEL = "skipgram"
@@ -94,7 +97,7 @@ def train(
     """Train word vectors on ads data.
 
     Word vectors are trained with fastText library. Trained word vectors are
-    saved to 'models/ads.{dim}.bin'.
+    saved to 'models/ads.{dim}.vec' and binary model to 'models/ads.{dim}.bin'.
 
     """
 

@@ -114,10 +114,10 @@ def _make_category_classification_samples(ads_df: pd.DataFrame) -> None:
 
     ad_category_df = pd.DataFrame.from_records(samples, columns=["sample", "label"])
     ad_category_df = ad_category_df.sample(frac=1)
-    ad_category_df.to_csv(paths.CATEGORY_CLASSIFICATION_FILE, index=False)
+    ad_category_df.to_csv(paths.CATEGORY_CLASSIFIER_DATASET_FILE, index=False)
 
     logger.info(
-        f"Ad category classification dataset saved to '{paths.CATEGORY_CLASSIFICATION_FILE}'"
+        f"Ad category classification dataset saved to '{paths.CATEGORY_CLASSIFIER_DATASET_FILE}'"
     )
 
 
