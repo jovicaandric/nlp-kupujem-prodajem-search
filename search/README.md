@@ -67,7 +67,7 @@ Hot reloading and debuggin is enabled by setting environment variable
 Start a `gunicorn` server with _n_ workers on port `5000` with
 
 ```
-$ gunicorn -w <n> -b :5000 analyzer.wsgi:app
+$ gunicorn -w <n> -b 0.0.0.0:5000 analyzer.wsgi:app
 ```
 
 Search query analyzer HTTP server exposes an endpoint for user's search query

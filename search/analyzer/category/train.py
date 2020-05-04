@@ -12,7 +12,7 @@ click.option = partial(click.option, show_default=True)
 
 logger = logging.getLogger("analyzer.category.train")
 
-EMBEDDING_DIM = 128
+EMBEDDING_DIM = 100
 WORD_NGRAMS = 2
 EPOCHS = 30
 LEARNING_RATE = 0.1
