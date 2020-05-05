@@ -14,14 +14,14 @@ click.option = partial(click.option, show_default=True)
 logger = logging.getLogger("analyzer.wv.train")
 
 
-EMBEDDING_DIM = 128
+EMBEDDING_DIM = 100
 EPOCHS = 30
 LEARNING_RATE = 0.1
 LOSS = "ns"
 MIN_WORD_COUNT = 2
 MODEL = "skipgram"
 NEGATIVE_SAMPLES = 5
-WINDOW_SIZE = 5
+WINDOW_SIZE = 10
 
 
 def _save_model(model) -> None:
@@ -98,7 +98,7 @@ def train(
         "min_count": min_word_count,
         "lr": lr,
         "thread": threads,
-        "ws": 10,
+        "ws": window_size,
         "neg": negative_samples,
     }
 
