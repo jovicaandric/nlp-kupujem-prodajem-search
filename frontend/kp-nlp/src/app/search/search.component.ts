@@ -17,6 +17,6 @@ export class SearchComponent {
     this.results = [];
     this.loader = true;
 
-    this.http.get("http://35.207.72.77:8080/search/" + this.query).subscribe((results: any) => { this.results = results; this.loader = false; });
+    this.http.get("http://35.207.72.77:8080/api/search/" + this.query).subscribe((results: any) => { this.results = results; this.loader = false; });
   }
 }

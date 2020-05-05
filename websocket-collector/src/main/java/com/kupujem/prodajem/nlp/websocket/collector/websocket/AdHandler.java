@@ -33,7 +33,6 @@ public class AdHandler extends WebSocketAdapter {
 
     @Override
     public void onTextMessage(WebSocket ws, String message) throws IOException {
-        LOGGER.info("Received message {}", message);
         final ObjectMapper mapper = new ObjectMapper();
         mapper.disable(WRITE_DATES_AS_TIMESTAMPS);
         final RawWebsocketEvent rawWebsocketEvent = mapper.readValue(message, RawWebsocketEvent.class);

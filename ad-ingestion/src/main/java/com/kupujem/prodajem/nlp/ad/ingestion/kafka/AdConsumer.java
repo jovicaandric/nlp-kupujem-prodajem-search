@@ -39,7 +39,7 @@ public class AdConsumer {
 
     public List<String> consume() {
         try {
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(configuration.getPollTimeout()));
+            final ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(configuration.getPollTimeout()));
             final List<String> result = new LinkedList<>();
             records.forEach(record -> {
                 result.add(record.value());

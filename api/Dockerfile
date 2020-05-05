@@ -1,16 +1,9 @@
-FROM node
+FROM openjdk:12.0.1
 
-# Create app directory
-RUN mkdir -p /app
+RUN mkdir /app
+COPY build/libs/*.jar /app/app.jar
+COPY build/resources/main/application.yml /app/application.yml
 WORKDIR /app
+RUN chmod +x app.jar
 
-# Install app dependencies
-COPY package.json /app
-COPY package-lock.json /app
-RUN npm i
-
-# Bundle app source
-COPY . /app
-RUN npm build
-
-CMD [ "npm", "start" ]
+ENTRYPOINT java -jar app.jar

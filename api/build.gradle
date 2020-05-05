@@ -7,7 +7,7 @@ plugins {
 
 group = 'com.kupujem.prodajem.nlp'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.11'
+sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
@@ -18,8 +18,7 @@ configurations.all {
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter')
-	compile('org.apache.kafka:kafka-clients:2.2.0')
+	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('com.fasterxml.jackson.core:jackson-databind:2.9.8')
 	compile('org.springframework.boot:spring-boot-starter-log4j2')
 	compile('org.elasticsearch:elasticsearch:7.6.2')

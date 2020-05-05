@@ -24,7 +24,6 @@ public class ElasticsearchPublisher {
     public void publish(final String document) {
         final IndexRequest request = new IndexRequest(configuration.getIndex());
         request.source(document, JSON);
-        System.out.println(document);
         try {
             client.index(request, DEFAULT);
         } catch (IOException e) {
