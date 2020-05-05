@@ -1,0 +1,13 @@
+package com.kupujem.prodajem.nlp.websocket.collector;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class WebsocketCollectorApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(WebsocketCollectorApplication.class, args);
+    }
+
+}

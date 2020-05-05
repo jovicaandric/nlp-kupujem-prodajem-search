@@ -1,0 +1,9 @@
+websocket:
+  url: wss://ws.kupujemprodajem.com/wsfeed?get=combined
+kafka:
+  producer:
+    ad:
+      servers: ${KAFKA_HOST:localhost:9092}
+      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+      valueSerializer: org.apache.kafka.common.serialization.StringSerializer
+      topic: ad-topic

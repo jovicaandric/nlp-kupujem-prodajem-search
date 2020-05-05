@@ -1,0 +1,26 @@
+version: '3'
+services:
+  websocket-collector:
+    image: orion036/kp-nlp-websocket-collector:latest-snapshot
+    restart: always
+    environment:
+      KAFKA_HOST: localhost:9092
+  ad-ingestion:
+    image: orion036/kp-nlp-ad-ingestion:latest-snapshot
+    restart: always
+    environment:
+      KAFKA_HOST: localhost:9092
+      ELASTICSEARCH_HOST: localhost
+  api:
+    image: orion036/kp-nlp-api:latest-snapshot
+    restart: always
+    ports:
+    - "8080:8080"
+    environment:
+      ELASTICSEARCH_HOST: localhost
+  frontend:
+    image: orion036/kp-nlp-frontend
+    ports:
+    - "80:80"
+    environment:
+      KP_NLP_API: api
