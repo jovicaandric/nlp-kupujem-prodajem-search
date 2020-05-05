@@ -9,6 +9,7 @@ PROCESSED_ADS_PATH = os.path.join(DATA_DIR, "processed", "ads.txt")
 CATEGORY_DATA_PATH = os.path.join(DATA_DIR, "interim", "categories.csv")
 FASTTEXT_CATEGORY_TRAIN_PATH = os.path.join(DATA_DIR, "processed", "categories.train")
 FASTTEXT_CATEGORY_TEST_PATH = os.path.join(DATA_DIR, "processed", "categories.test")
+LOCATIONS_PATH = os.path.join(DATA_DIR, "processed", "locations.txt")
 
 MODELS_DIR = os.path.join(ROOT_DIR, "models")
 
