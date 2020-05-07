@@ -2,6 +2,9 @@
 .ropeproject/
 __pycache__/
 
+#MyPy cache
+.mypy_cache/
+
 # Jupyter checkpoints
 .ipynb_checkpoints/
 
