@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 import fasttext
 
@@ -18,8 +19,9 @@ class AdCategoryClassifier:
 
         logger.info("Ad category classifier model loaded")
 
-    def predict(self, query: str) -> str:
+    def predict(self, query: str) -> Optional[str]:
         predictions = self._model.predict(query)
         category = predictions[0][0].replace(self._label_tag, "")
         confidence = predictions[1][0]
-        return category, confidence
+        prediction = category if confidence > self.confidence_threshold else None
+        return prediction
