@@ -1,7 +1,7 @@
 import os
 
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(ROOT_DIR, "data")
 
 RAW_ADS_PATH = os.path.join(DATA_DIR, "raw", "ads.csv")

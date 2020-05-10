@@ -14,10 +14,10 @@ import pandas as pd
 from elasticsearch import Elasticsearch, exceptions
 from elasticsearch.helpers import scan
 
-import paths
+from .. import paths
 
 
-logger = logging.getLogger("data.fetch")
+logger = logging.getLogger("analyzer.data.fetch")
 
 
 COLUMNS = [

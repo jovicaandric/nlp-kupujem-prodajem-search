@@ -3,7 +3,7 @@ from typing import Optional
 
 import fasttext
 
-import paths
+from .. import paths
 
 
 logger = logging.getLogger("analyzer.category.model")

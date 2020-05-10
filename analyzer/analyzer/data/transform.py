@@ -7,10 +7,10 @@ import numpy as np
 import pandas as pd
 from pandarallel import pandarallel
 
-import paths
+from .. import paths, utils
 
 
-logger = logging.getLogger("data.transform")
+logger = logging.getLogger("analyzer.data.transform")
 
 pandarallel.initialize()
 
@@ -43,14 +43,6 @@ LOCATION_PHRASES = [
 ]
 
 
-def _remove_non_text_chars(text: str) -> str:
-    return re.sub("\\W", " ", text)
-
-
-def _remove_redundant_whitespaces(text: str) -> str:
-    return re.sub("\\s+", " ", text).strip()
-
-
 def _convert_ad_to_text_line(ad: pd.Series) -> str:
     category = re.sub("-", " ", ad["category"])
     sub_category = re.sub("-", " ", ad["sub_category"])
@@ -66,7 +58,7 @@ def _convert_ad_to_text_line(ad: pd.Series) -> str:
         f"{search_phrase} {name} {category} {sub_category} "
         f"{description} {location_phrase} {location}"
     )
-    line = _remove_redundant_whitespaces(line)
+    line = utils.remove_redundant_whitespaces(line)
     line = line.lower()
 
     return line
@@ -87,11 +79,11 @@ def _transform_ads_to_text_lines(ads_df: pd.DataFrame) -> None:
 
 
 def _convert_ad_to_category_classification_sample(ad: pd.Series,) -> Tuple[str, str]:
-    name = _remove_non_text_chars(ad["name"])
-    description = _remove_non_text_chars(ad["description"])
+    name = utils.remove_non_text_chars(ad["name"])
+    description = utils.remove_non_text_chars(ad["description"])
 
     sample = f"{name} {description}"
-    sample = _remove_redundant_whitespaces(sample)
+    sample = utils.remove_redundant_whitespaces(sample)
     sample = sample.lower()
     label = ad.category.lower()
 
@@ -109,7 +101,7 @@ def _make_category_classification_samples(ads_df: pd.DataFrame) -> pd.DataFrame:
         .drop_duplicates()
         .parallel_apply(
             lambda row: (
-                _remove_non_text_chars(row.sub_category).lower(),
+                utils.remove_non_text_chars(row.sub_category).lower(),
                 row.category.lower(),
             ),
             axis=1,
@@ -136,8 +128,8 @@ def _make_locations(ads_df: pd.DataFrame) -> List[str]:
 
     locations = []
     for location in sorted(unique_locations):
-        clean_location = _remove_non_text_chars(location)
-        clean_location = _remove_redundant_whitespaces(clean_location)
+        clean_location = utils.remove_non_text_chars(location)
+        clean_location = utils.remove_redundant_whitespaces(clean_location)
 
         if clean_location:
             locations.append(clean_location)

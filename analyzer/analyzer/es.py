@@ -1,7 +1,7 @@
 from typing import Dict
 
-from analyzer.category.model import AdCategoryClassifier
-from analyzer.location.model import AdLocationClassificator
+from .category.model import AdCategoryClassifier
+from .location.model import AdLocationClassificator
 
 
 class ElasticSearchQueryBuilder:

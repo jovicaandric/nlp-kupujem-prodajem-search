@@ -1,15 +1,12 @@
 import logging
 import multiprocessing as mp
-from functools import partial
 
 import click
 import fasttext
+from .utils import save_vec_model
 
-import paths
-from analyzer.utils import save_vec_model
+from .. import paths
 
-
-click.option = partial(click.option, show_default=True)
 
 logger = logging.getLogger("analyzer.wv.train")
 
@@ -38,39 +35,67 @@ def _save_model(model) -> None:
 
 @click.command()
 @click.option(
-    "--model", type=str, default=MODEL, help="Type of model: 'cbow' or 'skipgram'"
+    "--model",
+    type=str,
+    default=MODEL,
+    help="Type of model: 'cbow' or 'skipgram'",
+    show_default=True,
 )
 @click.option(
-    "--loss", type=str, default=LOSS, help="Loss function: 'ns', 'softmax', 'hs'"
+    "--loss",
+    type=str,
+    default=LOSS,
+    help="Loss function: 'ns', 'softmax', 'hs'",
+    show_default=True,
 )
-@click.option("--dim", type=int, default=EMBEDDING_DIM, help="Word vector dimension.")
-@click.option("--epochs", type=int, default=EPOCHS, help="Number of training epochs.")
+@click.option(
+    "--dim",
+    type=int,
+    default=EMBEDDING_DIM,
+    help="Word vector dimension.",
+    show_default=True,
+)
+@click.option(
+    "--epochs",
+    type=int,
+    default=EPOCHS,
+    help="Number of training epochs.",
+    show_default=True,
+)
 @click.option(
     "--min_word_count",
     type=int,
     default=MIN_WORD_COUNT,
     help="Minimal number of word occurrences.",
+    show_default=True,
 )
 @click.option(
-    "--window_size", type=int, default=WINDOW_SIZE, help="Size of the context window.",
+    "--window_size",
+    type=int,
+    default=WINDOW_SIZE,
+    help="Size of the context window.",
+    show_default=True,
 )
 @click.option(
     "--negative_samples",
     type=int,
     default=NEGATIVE_SAMPLES,
     help="Number of negative samples.",
+    show_default=True,
 )
 @click.option(
     "--lr",
     type=float,
     default=LEARNING_RATE,
     help="Learning rate. It should be in [0.01, 1.0].",
+    show_default=True,
 )
 @click.option(
     "--threads",
     type=int,
     default=mp.cpu_count(),
     help="Number of threads used in training. Defaults to number of cores.",
+    show_default=True,
 )
 def train(
     model: str,

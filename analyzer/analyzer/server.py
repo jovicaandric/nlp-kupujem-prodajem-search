@@ -3,7 +3,7 @@ import re
 
 from flask import Flask, request, jsonify
 
-from es import ElasticSearchQueryBuilder
+from .es import ElasticSearchQueryBuilder
 
 
 app = Flask(__name__)

@@ -1,14 +1,11 @@
 import logging
 import multiprocessing as mp
-from functools import partial
 
 import click
 import fasttext
 
-import paths
+from .. import paths
 
-
-click.option = partial(click.option, show_default=True)
 
 logger = logging.getLogger("analyzer.category.train")
 
@@ -19,22 +16,40 @@ LEARNING_RATE = 0.1
 
 
 @click.command()
-@click.option("--dim", type=int, default=EMBEDDING_DIM, help="Word vector dimension.")
 @click.option(
-    "--word_ngrams", type=int, default=WORD_NGRAMS, help="Max length of word ngrams."
+    "--dim",
+    type=int,
+    default=EMBEDDING_DIM,
+    help="Word vector dimension.",
+    show_default=True,
 )
-@click.option("--epochs", type=int, default=EPOCHS, help="Number of training epochs.")
+@click.option(
+    "--word_ngrams",
+    type=int,
+    default=WORD_NGRAMS,
+    help="Max length of word ngrams.",
+    show_default=True,
+)
+@click.option(
+    "--epochs",
+    type=int,
+    default=EPOCHS,
+    help="Number of training epochs.",
+    show_default=True,
+)
 @click.option(
     "--lr",
     type=float,
     default=LEARNING_RATE,
     help="Learning rate. It should be in [0.01, 1.0].",
+    show_default=True,
 )
 @click.option(
     "--threads",
     type=int,
     default=mp.cpu_count(),
     help="Number of threads used in training. Defaults to number of cores.",
+    show_default=True,
 )
 def train(dim: int, word_ngrams: int, epochs: int, lr: float, threads: int) -> None:
     pretrained_vectors_path = paths.fasttext_model_file(

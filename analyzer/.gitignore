@@ -18,6 +18,9 @@ exp/
 *.train
 *.test
 
+# Dockerignore
+.dockerignore
+
 # Model files
 *.bin
 *.vec

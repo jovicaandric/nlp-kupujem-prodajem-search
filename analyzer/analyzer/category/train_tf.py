@@ -1,7 +1,6 @@
 import logging
 import os
 import pickle
-from functools import partial
 from typing import Tuple, Dict, Iterable
 
 import click
@@ -11,10 +10,7 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
 
-import paths
-
-
-click.option = partial(click.option, show_default=True)
+from .. import paths
 
 
 logger = logging.getLogger("analyzer.category.train_tf")
@@ -160,19 +156,25 @@ def create_model(
 
 @click.command()
 @click.option(
-    "--embedding_dim", type=int, default=EMBEDDING_DIM, help="Size of word vectors."
+    "--embedding_dim",
+    type=int,
+    default=EMBEDDING_DIM,
+    help="Size of word vectors.",
+    show_default=True,
 )
 @click.option(
     "--max_num_words",
     type=int,
     default=MAX_NUM_WORDS,
     help="Number of words considered by tokenizer.",
+    show_default=True,
 )
 @click.option(
     "--max_sequence_len",
     type=int,
     default=MAX_SEQUENCE_LEN,
     help="Length of tokenized text sequences.",
+    show_default=True,
 )
 def train(embedding_dim: int, max_num_words: int, max_sequence_len: int) -> None:
     """Train RNN ad classification model with tensorflow.

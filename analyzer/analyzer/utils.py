@@ -1,7 +1,7 @@
+import re
+
 import numpy as np
-
-
-FastText = "FastText"
+from fasttext.FastText import _FastText as FastText
 
 
 def convert_bin_to_vec(model: FastText) -> np.ndarray:
@@ -44,3 +44,11 @@ def save_vec_model(model: FastText, path: str) -> None:
         delimiter=" ",
         comments="",
     )
+
+
+def remove_non_text_chars(text: str) -> str:
+    return re.sub("\\W", " ", text)
+
+
+def remove_redundant_whitespaces(text: str) -> str:
+    return re.sub("\\s+", " ", text).strip()
