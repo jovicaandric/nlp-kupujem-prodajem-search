@@ -4,7 +4,7 @@ import click
 import pandas as pd
 from pandarallel import pandarallel
 
-import paths
+from .. import paths
 
 
 logger = logging.getLogger("analyzer.category.transform")

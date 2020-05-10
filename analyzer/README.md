@@ -163,10 +163,10 @@ Ad documents look like this:
 }
 ```
 
-When [data/fetch.py](./data/fetch.py) is executed, first the latest ad is read from
+When [analyzer/data/fetch.py](./analyzer/data/fetch.py) is executed, first the latest ad is read from
 `data/raw/ads.csv`, if any.  Based on ad `id` and `posted_at` fields, only the
 more recent documents are fetched from elasticsearch index.
 
 Raw ads are transformed into human readable text lines suitable for skipgram
-model. Check out [train.py](./train.py) for model hyperparameters and more
+model. Check out [analyzer/wv/train.py](./analyzer/wv/train.py) for model hyperparameters and more
 details.

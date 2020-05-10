@@ -1,11 +1,12 @@
 import logging
 import os
-import re
 from collections import defaultdict
 from typing import List, Dict, Tuple, Optional
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
+from .. import utils
 
 
 logger = logging.getLogger("analyzer.location.model")
@@ -58,7 +59,7 @@ class AdLocationClassificator:
         if not query:
             raise ValueError("Empty query")
 
-        clean_query = re.sub("\\W", " ", query).lower()
+        clean_query = utils.remove_non_text_chars(text=query.lower())
 
         query_word_ngrams = []
         for n in [1, 2, 3]:

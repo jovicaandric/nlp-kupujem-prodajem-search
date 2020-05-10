@@ -7,11 +7,11 @@ MODELS = models
 
 all: fetch transform train
 
-fetch: data/fetch.py
-	python -m data.fetch ${ES_HOST} ${ES_INDEX}
+fetch: analyzer/data/fetch.py
+	python -m analyzer.data.fetch ${ES_HOST} ${ES_INDEX}
 
 transform: fetch
-	python -m data.transform
+	python -m analyzer.data.transform
 
 train: transform
 	python -m analyzer.wv.train
