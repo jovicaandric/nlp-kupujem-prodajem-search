@@ -14,7 +14,7 @@ class AdCategoryClassifier:
         self.confidence_threshold = confidence_threshold
         self._label_tag = "__label__"
 
-        model_path = paths.fasttext_model_file("category", dim=dim, extension="bin")
+        model_path = paths.fasttext_model_file("category", dim=dim, extension="ftz")
         self._model = fasttext.load_model(model_path)
 
         logger.info("Ad category classifier model loaded")
