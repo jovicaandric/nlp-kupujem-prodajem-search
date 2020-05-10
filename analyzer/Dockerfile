@@ -20,7 +20,7 @@ RUN POETRY_VIRTUALENVS_CREATE=false poetry install --no-dev --no-interaction --n
 
 RUN mkdir -p /opt/kp/{models,analyzer}
 
-COPY models/ads.category.100.bin /opt/kp/models/
+COPY models/ads.category.100.ftz /opt/kp/models/
 COPY analyzer /opt/kp/analyzer/
 
 CMD ["gunicorn", "--workers", "2", "--bind", "0.0.0.0:5000", "analyzer.wsgi:app"]
