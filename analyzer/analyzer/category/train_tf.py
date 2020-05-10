@@ -156,21 +156,21 @@ def create_model(
 
 @click.command()
 @click.option(
-    "--embedding_dim",
+    "--embedding-dim",
     type=int,
     default=EMBEDDING_DIM,
     help="Size of word vectors.",
     show_default=True,
 )
 @click.option(
-    "--max_num_words",
+    "--max-num-words",
     type=int,
     default=MAX_NUM_WORDS,
     help="Number of words considered by tokenizer.",
     show_default=True,
 )
 @click.option(
-    "--max_sequence_len",
+    "--max-sequence-len",
     type=int,
     default=MAX_SEQUENCE_LEN,
     help="Length of tokenized text sequences.",

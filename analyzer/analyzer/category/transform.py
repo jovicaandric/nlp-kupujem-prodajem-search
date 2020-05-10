@@ -12,7 +12,7 @@ logger = logging.getLogger("analyzer.category.transform")
 
 @click.command()
 @click.option(
-    "--test_size",
+    "--test-size",
     type=float,
     default=0.25,
     show_default=True,

@@ -3,22 +3,21 @@ import multiprocessing as mp
 
 import click
 import fasttext
-from .utils import save_vec_model
 
-from .. import paths
+from .. import paths, utils
 
 
 logger = logging.getLogger("analyzer.wv.train")
 
 
 EMBEDDING_DIM = 100
-EPOCHS = 30
+EPOCHS = 50
 LEARNING_RATE = 0.1
 LOSS = "ns"
 MIN_WORD_COUNT = 2
 MODEL = "skipgram"
 NEGATIVE_SAMPLES = 5
-WINDOW_SIZE = 10
+WINDOW_SIZE = 5
 
 
 def _save_model(model) -> None:
@@ -29,7 +28,7 @@ def _save_model(model) -> None:
     logger.info(f"Ads word vector binary model saved to '{bin_model_file}'")
 
     vec_model_file = paths.fasttext_model_file(module="wv", dim=dim, extension="vec")
-    save_vec_model(model, path=vec_model_file)
+    utils.save_vec_model(model, path=vec_model_file)
     logger.info(f"Ads word vector vector model saved to '{vec_model_file}'")
 
 
@@ -63,21 +62,21 @@ def _save_model(model) -> None:
     show_default=True,
 )
 @click.option(
-    "--min_word_count",
+    "--min-word-count",
     type=int,
     default=MIN_WORD_COUNT,
     help="Minimal number of word occurrences.",
     show_default=True,
 )
 @click.option(
-    "--window_size",
+    "--window-size",
     type=int,
     default=WINDOW_SIZE,
     help="Size of the context window.",
     show_default=True,
 )
 @click.option(
-    "--negative_samples",
+    "--negative-samples",
     type=int,
     default=NEGATIVE_SAMPLES,
     help="Number of negative samples.",

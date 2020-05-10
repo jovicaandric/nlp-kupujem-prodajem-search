@@ -12,7 +12,7 @@ logger = logging.getLogger("analyzer.category.train")
 
 EMBEDDING_DIM = 100
 WORD_NGRAMS = 2
-EPOCHS = 30
+EPOCHS = 40
 LEARNING_RATE = 0.1
 
 
@@ -44,7 +44,7 @@ def _test_model(model: FastTextModel) -> None:
     show_default=True,
 )
 @click.option(
-    "--word_ngrams",
+    "--word-ngrams",
     type=int,
     default=WORD_NGRAMS,
     help="Max length of word ngrams.",
