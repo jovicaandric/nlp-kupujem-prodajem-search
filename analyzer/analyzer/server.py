@@ -1,9 +1,9 @@
 import json
-import re
 
 from flask import Flask, request, jsonify
 
 from .es import ElasticSearchQueryBuilder
+from .utils import remove_non_text_chars, remove_redundant_whitespaces
 
 
 app = Flask(__name__)
@@ -13,9 +13,8 @@ es_query_builder = ElasticSearchQueryBuilder()
 
 
 def _clean_search_query(query: str) -> str:
-    clean_query = re.sub("\\W", " ", query.lower())
-    clean_query = re.sub("\\s+", " ", clean_query)
-    clean_query = clean_query.strip()
+    clean_query = remove_non_text_chars(text=query.lower())
+    clean_query = remove_redundant_whitespaces(text=clean_query)
     return clean_query
 
 
@@ -24,7 +23,12 @@ def analyzer():
     if not request.data:
         return "Missing request body", 400
 
-    body = json.loads(request.data)
+    try:
+        body = json.loads(request.data)
+    except json.JSONDecodeError:
+        error = "JSON parse error for input query"
+        app.logger.error(f"{error}: {request.data}")
+        return error, 400
 
     if "query" not in body:
         return "Request body missing 'query' field", 400
