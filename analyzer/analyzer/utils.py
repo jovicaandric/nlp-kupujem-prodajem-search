@@ -1,10 +1,10 @@
 import re
 
 import numpy as np
-from fasttext.FastText import _FastText as FastText
+from fasttext.FastText import _FastText as FastTextModel
 
 
-def convert_bin_to_vec(model: FastText) -> np.ndarray:
+def convert_bin_to_vec(model: FastTextModel) -> np.ndarray:
     """Convert binary fastText model to word vectors model."""
     word_vectors = np.zeros((len(model.words), model.get_dimension() + 1), dtype=object)
 
@@ -16,7 +16,7 @@ def convert_bin_to_vec(model: FastText) -> np.ndarray:
     return word_vectors
 
 
-def save_vec_model(model: FastText, path: str) -> None:
+def save_vec_model(model: FastTextModel, path: str) -> None:
     """Save vector fastText model.
 
     Binary fastText model is covnerted to vecotr model and saved to PATH.vec
