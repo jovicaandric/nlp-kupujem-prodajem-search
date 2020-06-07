@@ -11,7 +11,7 @@ logger = logging.getLogger("analyzer.category.predictor")
 
 
 class AdCategoryPredictor(BasePredictor):
-    def __init__(self, model: FastTextModel, confidence_threshold: float = 0.7):
+    def __init__(self, model: FastTextModel, confidence_threshold: float = 0.75):
         self._model = model
         self._confidence_threshold = confidence_threshold
         self._label_tag = "__label__"

@@ -38,9 +38,6 @@ class AdLocationPredictor(BasePredictor):
         return cls(vectorizer)
 
     def predict(self, user_query: str) -> Optional[str]:
-        if not user_query:
-            raise ValueError("Empty query")
-
         clean_query = utils.remove_non_text_chars(text=user_query.lower())
 
         query_word_ngrams = []
