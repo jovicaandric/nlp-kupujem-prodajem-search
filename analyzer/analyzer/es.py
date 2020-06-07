@@ -1,13 +1,18 @@
 from typing import Dict
 
-from .category.model import AdCategoryClassifier
-from .location.model import AdLocationClassificator
+from . import paths
+from .category.predictor import AdCategoryPredictor
+from .location.predictor import AdLocationPredictor
 
 
 class ElasticSearchQueryBuilder:
     def __init__(self):
-        self._ad_category_classifier = AdCategoryClassifier()
-        self._ad_location_classifier = AdLocationClassificator()
+        self._ad_category_predictor = AdCategoryPredictor.from_path(
+            paths.fasttext_model_file(module="category", dim=100, extension="ftz")
+        )
+        self._ad_location_predictor = AdLocationPredictor.from_path(
+            paths.LOCATIONS_VECTORIZER_PATH
+        )
 
     def build(self, user_search_query: str) -> Dict:
         ad_name_filter = self._build_ad_name_filter(user_search_query)
@@ -40,7 +45,7 @@ class ElasticSearchQueryBuilder:
         }
 
     def _build_category_filter(self, user_search_query: str) -> Dict:
-        category = self._ad_category_classifier.predict(user_search_query)
+        category = self._ad_category_predictor.predict(user_search_query)
 
         if category is None:
             return {"match_all": {}}
@@ -48,7 +53,7 @@ class ElasticSearchQueryBuilder:
             return {"match": {"category": category}}
 
     def _build_location_filter(self, user_search_query: str) -> Dict:
-        location = self._ad_location_classifier.predict(user_search_query)
+        location = self._ad_location_predictor.predict(user_search_query)
 
         if location is None:
             return {"match_all": {}}

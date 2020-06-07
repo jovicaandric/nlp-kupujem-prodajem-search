@@ -12,6 +12,7 @@ FASTTEXT_CATEGORY_TEST_PATH = os.path.join(DATA_DIR, "processed", "categories.te
 LOCATIONS_PATH = os.path.join(DATA_DIR, "processed", "locations.txt")
 
 MODELS_DIR = os.path.join(ROOT_DIR, "models")
+LOCATIONS_VECTORIZER_PATH = os.path.join(MODELS_DIR, "ads.location.vectorizer.pkl")
 
 TOKENIZER_PATH = os.path.join(MODELS_DIR, "tokenizer.pkl")
 

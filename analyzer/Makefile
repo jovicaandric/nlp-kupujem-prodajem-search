@@ -17,6 +17,7 @@ train: transform
 	python -m analyzer.wv.train
 	python -m analyzer.category.transform
 	python -m analyzer.category.train --compress
+	python -m analyzer.location.train
 
 clean:
 	rm $(RAW_DATA)/*
