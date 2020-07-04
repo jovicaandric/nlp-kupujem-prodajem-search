@@ -20,8 +20,8 @@ PriceQuery = List[Tuple[str, Optional[float]]]
 
 class Modifier:
     NONE: str = ""
-    LESS_OR_EQUAL: str = "<="
-    GREATER_OR_EQUAL: str = ">="
+    LESS_OR_EQUAL: str = "lte"
+    GREATER_OR_EQUAL: str = "gte"
 
 
 class Currency:
@@ -35,6 +35,8 @@ class Currency:
 
 
 class PriceRangeParser:
+    DEFAULT_FILTER = (Modifier.GREATER_OR_EQUAL, 0.0)
+
     def parse(self, query: str) -> Tuple[PriceQuery, Optional[str]]:
         price_range = self._parse_price_range(query)
 
@@ -42,6 +44,9 @@ class PriceRangeParser:
             return [], None
 
         price_query, currency = self._parse_price_query(price_range)
+
+        if all(price_filter == self.DEFAULT_FILTER for price_filter in price_query):
+            return [], None
 
         if currency is None:
             currency = self._parse_currency(query)
@@ -115,7 +120,7 @@ class PriceRangeParser:
 
         query: PriceQuery
         if is_between_query:
-            first_mod, raw_first_price, second_mod, raw_second_price = [
+            raw_first_mod, raw_first_price, raw_second_mod, raw_second_price = [
                 word for word, _ in price_range
             ]
 
@@ -123,14 +128,27 @@ class PriceRangeParser:
             if first_price.currency:
                 currencies.append(first_price.currency)
 
+            first_mod = self._parse_modifier(raw_first_mod)
+
+            first_filter: Tuple[str, Optional[float]]
+            if first_mod == Modifier.NONE or first_price.amount is None:
+                first_filter = self.DEFAULT_FILTER
+            else:
+                first_filter = (first_mod, first_price.amount_float)
+
             second_price = Price.fromstring(raw_second_price.upper())
             if second_price.currency:
                 currencies.append(second_price.currency)
 
-            query = [
-                (self._parse_modifier(first_mod), first_price.amount_float),
-                (self._parse_modifier(second_mod), second_price.amount_float),
-            ]
+            second_mod = self._parse_modifier(raw_second_mod)
+
+            second_filter: Tuple[str, Optional[float]]
+            if second_mod == Modifier.NONE or second_price.amount is None:
+                second_filter = self.DEFAULT_FILTER
+            else:
+                second_filter = (second_mod, second_price.amount_float)
+
+            query = [first_filter, second_filter]
         else:
             mod, raw_price = [word for word, _ in price_range]
 
@@ -141,9 +159,14 @@ class PriceRangeParser:
                 if price.currency in Currency.RSD_TOKENS:
                     currencies.append(Currency.RSD)
 
-            query = [
-                (self._parse_modifier(mod), price.amount_float),
-            ]
+            modifier = self._parse_modifier(mod)
+
+            if modifier == Modifier.NONE or price.amount is None:
+                query = [self.DEFAULT_FILTER]
+            else:
+                query = [
+                    (modifier, price.amount_float),
+                ]
 
         currency = None
         if currencies:

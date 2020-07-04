@@ -36,7 +36,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "1.4.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Classes Without Boilerplate"
 name = "attrs"
 optional = false
@@ -862,6 +862,17 @@ version = ">=0.12"
 dev = ["pre-commit", "tox"]
 
 [[package]]
+category = "main"
+description = "Extract price and currency from a raw string"
+name = "price-parser"
+optional = false
+python-versions = "*"
+version = "0.3.3"
+
+[package.dependencies]
+attrs = ">=17.3.0"
+
+[[package]]
 category = "dev"
 description = "Python client for the Prometheus monitoring system."
 name = "prometheus-client"
@@ -1392,7 +1403,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "ff0f72e3333b5efbf110d0b8696337be17ca2697540c3734bc39b9fa45322c69"
+content-hash = "f7fa48f14a69f13050d48390c65d589a6a5cc750b17eb54bafec1aeb7d8bd4ff"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -1816,6 +1827,10 @@ pickleshare = [
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
+]
+price-parser = [
+    {file = "price-parser-0.3.3.tar.gz", hash = "sha256:0c35ee9fbcf0fae2c065ee34d4671428431858239434e68bfcf2eb7034bc13be"},
+    {file = "price_parser-0.3.3-py2.py3-none-any.whl", hash = "sha256:815fa2f80f0eaf1c4fd9a03750ce52e7b037d3af3e295f77e89de8c89e8780a3"},
 ]
 prometheus-client = [
     {file = "prometheus_client-0.7.1.tar.gz", hash = "sha256:71cd24a2b3eb335cb800c7159f423df1bd4dcd5171b234be15e3f31ec9f622da"},

@@ -67,6 +67,8 @@ parser = PriceRangeParser()
         ("samsung s10", [], None,),
         ("eurithmycs album nov", [], None,),
         ("trazim knjigu: Planina Dinara", [], None,),
+        ("hocu s10 kroz 100EUR", [], None,),
+        ("hocu s10 kroz 100 na 150", [], None,),
     ],
 )
 def test_parse(query, expected_price_query, expected_currency):
