@@ -1,7 +1,9 @@
 import re
-from typing import Set, List, Tuple
+from collections import Counter
+from typing import Set, List, Tuple, Optional
 
 import stanza
+from price_parser import Price
 
 
 _NUM_PATTERNS: Set[str] = set(["ADP NUM", "ADP NUM ADP NUM"])
@@ -11,17 +13,35 @@ PATTERNS: Set[str] = _NUM_PATTERNS.union(_ADJ_PATTERNS)
 NLP = stanza.Pipeline(lang="sr", processors="tokenize,pos", logging_level="WARN")
 
 WordPosList = List[Tuple[str, str]]
+PriceQuery = List[Tuple[str, Optional[float]]]
+
+
+class Modifier:
+    NONE: str = ""
+    LESS_OR_EQUAL: str = "<="
+    GREATER_OR_EQUAL: str = ">="
+
+
+class Currency:
+    EUR: str = "EUR"
+    RSD: str = "RSD"
+
+    DEFAULT: str = EUR
+
+    RSD_TOKENS: List[str] = ["rsd", "dinara", "dinar", "din"]
+    EUR_TOKENS: List[str] = ["eur", "eura", "evra", "euro", "€"]
 
 
 class PriceRangeParser:
-    def __init__(self):
-        pass
-
-    def parse(self, query: str) -> dict:
+    def parse(self, query: str) -> Tuple[PriceQuery, str]:
         clean_query = self._preprocess(query)
         price_range = self._parse_price_range(clean_query)
-        price_query = self._parse_price_query(price_range)
-        return price_query
+        price_query, currency = self._parse_price_query(price_range)
+
+        if currency is None:
+            currency = self._parse_currency(clean_query)
+
+        return price_query, currency
 
     def _preprocess(self, query: str) -> str:
         # TODO: Replace special characters.
@@ -80,12 +100,70 @@ class PriceRangeParser:
 
         return False
 
-    def _parse_price_query(self, price_range: WordPosList) -> dict:
-        return {w: t for w, t in price_range}
-
     def _get_pos_tags(self, word_pos_list: WordPosList) -> str:
         pos_tags = " ".join([upos for _, upos in word_pos_list])
         return pos_tags
+
+    def _parse_price_query(
+        self, price_range: WordPosList
+    ) -> Tuple[PriceQuery, Optional[str]]:
+        is_between_query = len(price_range) == 4
+
+        currencies: List[str] = []
+
+        query: PriceQuery
+        if is_between_query:
+            first_mod, raw_first_price, second_mod, raw_second_price = [
+                word for word, _ in price_range
+            ]
+
+            first_price = Price.fromstring(raw_first_price.upper())
+            if first_price.currency:
+                currencies.append(first_price.currency)
+
+            second_price = Price.fromstring(raw_second_price.upper())
+            if second_price.currency:
+                currencies.append(second_price.currency)
+
+            query = [
+                (self._parse_modifier(first_mod), first_price.amount_float),
+                (self._parse_modifier(second_mod), second_price.amount_float),
+            ]
+        else:
+            mod, raw_price = [word for word, _ in price_range]
+
+            price = Price.fromstring(raw_price.upper())
+            if price.currency:
+                currencies.append(price.currency)
+
+            query = [
+                (self._parse_modifier(mod), price.amount_float),
+            ]
+
+        currency = None
+        if currencies:
+            [(currency, _)] = Counter(currencies).most_common(n=1)
+
+        return query, currency
+
+    def _parse_modifier(self, modifier: str) -> str:
+        return {
+            "od": Modifier.GREATER_OR_EQUAL,
+            "iznad": Modifier.GREATER_OR_EQUAL,
+            "do": Modifier.LESS_OR_EQUAL,
+            "ispod": Modifier.LESS_OR_EQUAL,
+        }.get(modifier, Modifier.NONE)
+
+    def _parse_currency(self, query: str) -> str:
+        for rsd_token in Currency.RSD_TOKENS:
+            if rsd_token in query:
+                return Currency.RSD
+
+        for eur_token in Currency.EUR_TOKENS:
+            if eur_token in query:
+                return Currency.EUR
+
+        return Currency.DEFAULT
 
 
 if __name__ == "__main__":
