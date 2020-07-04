@@ -19,6 +19,12 @@ Install dependencies in activated environment with:
 $ poetry install
 ```
 
+Download `stanza` models for SR language with
+
+```bash
+$ python -c "import stanza; stanza.download('sr')"
+```
+
 Fetch data from elasticsearch, transform it and train word vectors with:
 
 ```

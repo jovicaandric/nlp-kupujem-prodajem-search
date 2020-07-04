@@ -1,8 +1,9 @@
-from typing import Dict
+from typing import Dict, Tuple
 
 from . import paths
 from .category.predictor import AdCategoryPredictor
 from .location.predictor import AdLocationPredictor
+from .price.parser import PriceRangeParser
 
 
 class ElasticSearchQueryBuilder:
@@ -13,12 +14,13 @@ class ElasticSearchQueryBuilder:
         self._ad_location_predictor = AdLocationPredictor.from_path(
             paths.LOCATIONS_VECTORIZER_PATH
         )
+        self._price_range_parser = PriceRangeParser()
 
     def build(self, user_search_query: str) -> Dict:
         ad_name_filter = self._build_ad_name_filter(user_search_query)
         category_filter = self._build_category_filter(user_search_query)
         location_filter = self._build_location_filter(user_search_query)
-        price_filter = self._build_price_filter(user_search_query)
+        price_filter, currency_filter = self._build_price_filter(user_search_query)
 
         es_query = {
             "query": {
@@ -28,6 +30,7 @@ class ElasticSearchQueryBuilder:
                         category_filter,
                         location_filter,
                         price_filter,
+                        currency_filter,
                     ]
                 }
             }
@@ -60,6 +63,14 @@ class ElasticSearchQueryBuilder:
         else:
             return {"match": {"location": location}}
 
-    def _build_price_filter(self, user_search_query: str) -> Dict:
-        # TODO(nemanja) Implement when price analyzer is done.
-        return {"match_all": {}}
+    def _build_price_filter(self, user_search_query: str) -> Tuple[Dict, Dict]:
+        price_range, currency = self._price_range_parser.parse(user_search_query)
+
+        if not price_range:
+            return {"match_all": {}}, {"match_all": {}}
+        else:
+            price_filter = {modifier: amount for modifier, amount in price_range}
+            return (
+                {"range": {"price": price_filter}},
+                {"match": {"currency": currency.lower()}},
+            )
