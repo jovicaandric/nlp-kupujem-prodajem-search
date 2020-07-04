@@ -7,7 +7,9 @@ from price_parser import Price
 
 
 _NUM_PATTERNS: Set[str] = set(["ADP NUM", "ADP NUM ADP NUM"])
-_ADJ_PATTERNS: Set[str] = set(["ADP ADJ", "ADP ADJ ADP ADJ"])
+_ADJ_PATTERNS: Set[str] = set(
+    ["ADP ADJ", "ADP ADJ ADP ADJ", "ADP NUM ADP ADJ", "ADP ADJ ADP NUM"]
+)
 PATTERNS: Set[str] = _NUM_PATTERNS.union(_ADJ_PATTERNS)
 
 NLP = stanza.Pipeline(lang="sr", processors="tokenize,pos", logging_level="WARN")
@@ -33,9 +35,13 @@ class Currency:
 
 
 class PriceRangeParser:
-    def parse(self, query: str) -> Tuple[PriceQuery, str]:
+    def parse(self, query: str) -> Tuple[PriceQuery, Optional[str]]:
         clean_query = self._preprocess(query)
         price_range = self._parse_price_range(clean_query)
+
+        if not price_range:
+            return [], None
+
         price_query, currency = self._parse_price_query(price_range)
 
         if currency is None:
@@ -83,12 +89,13 @@ class PriceRangeParser:
             return True
 
         if pattern in _ADJ_PATTERNS:
+            pattern_len = len(pattern.split())
             tokens = []
-            if pattern == "ADP ADJ":
+            if pattern_len == 2:
                 _, (token, _) = candidate
                 tokens.append(token)
 
-            elif pattern == "ADP ADJ ADP ADJ":
+            elif pattern_len == 4:
                 _, (from_token, _), _, (to_token, _) = candidate
                 tokens.append(from_token)
                 tokens.append(to_token)
@@ -155,12 +162,13 @@ class PriceRangeParser:
         }.get(modifier, Modifier.NONE)
 
     def _parse_currency(self, query: str) -> str:
+        query_lower = query.lower()
         for rsd_token in Currency.RSD_TOKENS:
-            if rsd_token in query:
+            if rsd_token in query_lower:
                 return Currency.RSD
 
         for eur_token in Currency.EUR_TOKENS:
-            if eur_token in query:
+            if eur_token in query_lower:
                 return Currency.EUR
 
         return Currency.DEFAULT
