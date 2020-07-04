@@ -23,6 +23,7 @@ parser = PriceRangeParser()
         ("samsung s10 do 1,000evra", [(Modifier.LESS_OR_EQUAL, 1000.0)], Currency.EUR,),
         ("samsung s10 do 1,000 EUR", [(Modifier.LESS_OR_EQUAL, 1000.0)], Currency.EUR,),
         ("samsung s10 do 1,000EUR", [(Modifier.LESS_OR_EQUAL, 1000.0)], Currency.EUR,),
+        ("samsung s10 do 1,000€", [(Modifier.LESS_OR_EQUAL, 1000.0)], Currency.EUR,),
         ("samsung s10 do 1,000din", [(Modifier.LESS_OR_EQUAL, 1000.0)], Currency.RSD,),
         ("samsung s10 do 1,000 RSD", [(Modifier.LESS_OR_EQUAL, 1000.0)], Currency.RSD,),
         ("samsung s10 do 1,000RSD", [(Modifier.LESS_OR_EQUAL, 1000.0)], Currency.RSD,),

@@ -30,14 +30,13 @@ class Currency:
 
     DEFAULT: str = EUR
 
-    RSD_TOKENS: List[str] = ["rsd", "dinara", "dinar", "din"]
-    EUR_TOKENS: List[str] = ["eur", "eura", "evra", "euro", "€"]
+    RSD_TOKENS: Set[str] = set(["rsd", "dinara", "dinar", "din"])
+    EUR_TOKENS: Set[str] = set(["eur", "eura", "evra", "euro", "€"])
 
 
 class PriceRangeParser:
     def parse(self, query: str) -> Tuple[PriceQuery, Optional[str]]:
-        clean_query = self._preprocess(query)
-        price_range = self._parse_price_range(clean_query)
+        price_range = self._parse_price_range(query)
 
         if not price_range:
             return [], None
@@ -45,13 +44,9 @@ class PriceRangeParser:
         price_query, currency = self._parse_price_query(price_range)
 
         if currency is None:
-            currency = self._parse_currency(clean_query)
+            currency = self._parse_currency(query)
 
         return price_query, currency
-
-    def _preprocess(self, query: str) -> str:
-        # TODO: Replace special characters.
-        return query
 
     def _parse_price_range(self, query: str) -> WordPosList:
         word_upos: WordPosList = [
@@ -141,7 +136,10 @@ class PriceRangeParser:
 
             price = Price.fromstring(raw_price.upper())
             if price.currency:
-                currencies.append(price.currency)
+                if price.currency in Currency.EUR_TOKENS:
+                    currencies.append(Currency.EUR)
+                if price.currency in Currency.RSD_TOKENS:
+                    currencies.append(Currency.RSD)
 
             query = [
                 (self._parse_modifier(mod), price.amount_float),
