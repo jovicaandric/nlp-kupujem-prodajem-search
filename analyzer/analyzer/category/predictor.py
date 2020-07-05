@@ -20,7 +20,7 @@ class AdCategoryPredictor(BasePredictor):
     def from_path(cls, path: str) -> "AdCategoryPredictor":
         model = fasttext.load_model(path)
 
-        logger.info("Ad category prediction model initialized")
+        logger.info("Ad category predictor initialized")
 
         return cls(model)
 

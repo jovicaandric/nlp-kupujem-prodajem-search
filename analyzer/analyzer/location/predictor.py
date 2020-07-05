@@ -33,7 +33,7 @@ class AdLocationPredictor(BasePredictor):
         with open(path, "rb") as fp:
             vectorizer = pickle.load(fp)
 
-        logger.info("Ad location predictor model initialized")
+        logger.info("Ad location predictor initialized")
 
         return cls(vectorizer)
 

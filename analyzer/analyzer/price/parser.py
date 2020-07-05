@@ -1,3 +1,4 @@
+import logging
 import re
 from collections import Counter
 from typing import Set, List, Tuple, Optional
@@ -5,6 +6,8 @@ from typing import Set, List, Tuple, Optional
 import stanza
 from price_parser import Price
 
+
+logger = logging.getLogger("analyzer.price.parser")
 
 _NUM_PATTERNS: Set[str] = set(["ADP NUM", "ADP NUM ADP NUM"])
 _ADJ_PATTERNS: Set[str] = set(
@@ -16,6 +19,15 @@ NLP = stanza.Pipeline(lang="sr", processors="tokenize,pos", logging_level="WARN"
 
 WordPosList = List[Tuple[str, str]]
 PriceQuery = List[Tuple[str, Optional[float]]]
+
+
+class PriceLabel:
+    CONTACT: float = -1
+    AGREEMENT: float = -2
+    CALL: float = -3
+    FREE: float = -4
+    BUYING: float = -5
+    LOOKING: float = -6
 
 
 class Modifier:
@@ -36,6 +48,9 @@ class Currency:
 
 class PriceRangeParser:
     DEFAULT_FILTER = (Modifier.GREATER_OR_EQUAL, 0.0)
+
+    def __init__(self) -> None:
+        logger.info("Ad price parser initialized")
 
     def parse(self, query: str) -> Tuple[PriceQuery, Optional[str]]:
         price_range = self._parse_price_range(query)

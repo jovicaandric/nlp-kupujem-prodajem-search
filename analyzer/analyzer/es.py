@@ -3,7 +3,7 @@ from typing import Dict, Tuple
 from . import paths
 from .category.predictor import AdCategoryPredictor
 from .location.predictor import AdLocationPredictor
-from .price.parser import PriceRangeParser
+from .price.parser import PriceRangeParser, PriceLabel
 
 
 class ElasticSearchQueryBuilder:
@@ -21,21 +21,27 @@ class ElasticSearchQueryBuilder:
         category_filter = self._build_category_filter(user_search_query)
         location_filter = self._build_location_filter(user_search_query)
         price_filter, currency_filter = self._build_price_filter(user_search_query)
+        ads_exceptions_filters = self._build_ads_exceptions_filter()
+
+        filters = [
+            ad_name_filter,
+            category_filter,
+            location_filter,
+            price_filter,
+            currency_filter,
+        ]
+
+        non_empty_filters = [
+            query_filter
+            for query_filter in filters
+            if query_filter != {"match_all": {}}
+        ]
 
         es_query = {
             "query": {
-                "bool": {
-                    "must": [
-                        ad_name_filter,
-                        category_filter,
-                        location_filter,
-                        price_filter,
-                        currency_filter,
-                    ]
-                }
+                "bool": {"must": non_empty_filters, "must_not": ads_exceptions_filters}
             }
         }
-
         return es_query
 
     def _build_ad_name_filter(self, user_search_query: str) -> Dict:
@@ -72,5 +78,18 @@ class ElasticSearchQueryBuilder:
             price_filter = {modifier: amount for modifier, amount in price_range}
             return (
                 {"range": {"price": price_filter}},
-                {"match": {"currency": currency.lower()}},
+                {"match": {"currency": currency}},
             )
+
+    def _build_ads_exceptions_filter(self) -> Dict:
+        return {
+            "terms": {
+                "price": [
+                    PriceLabel.BUYING,
+                    PriceLabel.LOOKING,
+                    PriceLabel.AGREEMENT,
+                    PriceLabel.CONTACT,
+                    PriceLabel.CALL,
+                ],
+            }
+        }
