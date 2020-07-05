@@ -1,11 +1,7 @@
 package com.kupujem.prodajem.nlp.websocket.collector.websocket;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Arrays;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.kupujem.prodajem.nlp.websocket.collector.kafka.AdProducer;
 import com.kupujem.prodajem.nlp.websocket.collector.model.Ad;
 import com.kupujem.prodajem.nlp.websocket.collector.model.RawWebsocketEvent;
@@ -16,6 +12,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Arrays;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 
@@ -40,7 +40,7 @@ public class AdHandler extends WebSocketAdapter {
             if (payload != null) {
                 try {
                     final Ad ad = new Ad(payload);
-                    if (!ad.getPrice().equals("Kupujem")) {
+                    if (ad.isValid()) {
                         final String adJson = mapper.writeValueAsString(ad);
                         producer.publish(adJson);
                     }
@@ -52,7 +52,7 @@ public class AdHandler extends WebSocketAdapter {
     }
 
     @Override
-    public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
+    public void onError(WebSocket websocket, WebSocketException cause) {
         LOGGER.error("An error occurred. ", cause);
     }
 }
