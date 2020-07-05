@@ -17,13 +17,13 @@ public class AdIngestionRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(final String... args) throws Exception {
-        try{
-            while(true){
+    public void run(final String... args) {
+        try {
+            while (true) {
                 pipeline.processAds();
             }
-        }catch (final Exception exception) {
-            LOGGER.error("An error occurred while processing ad pipeline.",exception);
+        } catch (final Exception exception) {
+            LOGGER.error("An error occurred while processing ad pipeline.", exception);
         }
     }
 }

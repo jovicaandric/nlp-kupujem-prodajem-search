@@ -5,6 +5,8 @@ import com.kupujem.prodajem.nlp.ad.ingestion.kafka.AdConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class AdPipeline {
 
@@ -18,6 +20,7 @@ public class AdPipeline {
     }
 
     public void processAds() {
-        consumer.consume().forEach(ad -> publisher.publish(ad));
+        List<String> ads = consumer.consume();
+        publisher.publish(ads);
     }
 }

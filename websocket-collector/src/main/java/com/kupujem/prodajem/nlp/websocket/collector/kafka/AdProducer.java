@@ -1,11 +1,12 @@
 package com.kupujem.prodajem.nlp.websocket.collector.kafka;
 
-import java.util.Properties;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Properties;
 
 import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
@@ -14,7 +15,7 @@ import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_
 @Component
 public class AdProducer {
 
-    private AdProducerConfiguration configuration;
+    private final AdProducerConfiguration configuration;
     private final Producer<String, String> producer;
 
     @Autowired
