@@ -6,8 +6,9 @@ kafka:
       keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
       valueDeserializer: org.apache.kafka.common.serialization.StringDeserializer
       consumerGroup: ad-ingestion-1
-      pollTimeout: 1000
+      pollTimeout: 5000
       maxPollRecords: 100
+      fetchMinBytes: 32768
       offsetReset: earliest
 elasticsearch:
   hostname: ${ELASTICSEARCH_HOST:localhost}

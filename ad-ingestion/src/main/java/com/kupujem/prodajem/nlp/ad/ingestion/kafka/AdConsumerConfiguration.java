@@ -16,6 +16,7 @@ public class AdConsumerConfiguration {
     private String consumerGroup;
     private int pollTimeout;
     private int maxPollRecords;
+    private int fetchMinBytes;
     private String offsetReset;
 
     public String getServers() {
@@ -72,6 +73,14 @@ public class AdConsumerConfiguration {
 
     public void setMaxPollRecords(int maxPollRecords) {
         this.maxPollRecords = maxPollRecords;
+    }
+
+    public int getFetchMinBytes() {
+        return fetchMinBytes;
+    }
+
+    public void setFetchMinBytes(int fetchMinBytes) {
+        this.fetchMinBytes = fetchMinBytes;
     }
 
     public String getOffsetReset() {

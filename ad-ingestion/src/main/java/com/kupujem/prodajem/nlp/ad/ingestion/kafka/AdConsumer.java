@@ -14,6 +14,7 @@ import java.util.Properties;
 
 import static org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.FETCH_MIN_BYTES_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.MAX_POLL_RECORDS_CONFIG;
@@ -36,6 +37,7 @@ public class AdConsumer {
         properties.put(GROUP_ID_CONFIG, configuration.getConsumerGroup());
         properties.put(AUTO_OFFSET_RESET_CONFIG, configuration.getOffsetReset());
         properties.put(MAX_POLL_RECORDS_CONFIG, configuration.getMaxPollRecords());
+        properties.put(FETCH_MIN_BYTES_CONFIG, configuration.getFetchMinBytes());
         this.consumer = new KafkaConsumer<String, String>(properties);
         consumer.subscribe(Collections.singletonList(configuration.getTopic()));
     }

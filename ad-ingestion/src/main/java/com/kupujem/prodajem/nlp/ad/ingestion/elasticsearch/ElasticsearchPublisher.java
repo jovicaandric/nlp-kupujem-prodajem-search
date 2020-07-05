@@ -1,5 +1,7 @@
 package com.kupujem.prodajem.nlp.ad.ingestion.elasticsearch;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -21,11 +23,13 @@ public class ElasticsearchPublisher {
 
     private final RestHighLevelClient client;
     private final ElasticsearchConfiguration configuration;
+    private final ObjectMapper mapper;
 
     @Autowired
     public ElasticsearchPublisher(final RestHighLevelClient client, final ElasticsearchConfiguration configuration) {
         this.client = client;
         this.configuration = configuration;
+        this.mapper = new ObjectMapper();
     }
 
     public void publish(final List<String> documents) {
@@ -33,6 +37,8 @@ public class ElasticsearchPublisher {
 
         for (String document : documents) {
             final IndexRequest request = new IndexRequest(configuration.getIndex());
+            final String docId = extractDocId(document);
+            request.id(docId);
             request.source(document, JSON);
             bulkRequest.add(request);
         }
@@ -44,6 +50,15 @@ public class ElasticsearchPublisher {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private String extractDocId(String doc) {
+        try {
+            JsonNode on = mapper.readValue(doc, JsonNode.class);
+            return on.get("id").asText();
+        } catch (IOException e) {
+            return "null";
         }
     }
 }
