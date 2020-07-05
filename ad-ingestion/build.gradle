@@ -1,28 +1,28 @@
 plugins {
-	id 'org.springframework.boot' version '2.2.6.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-	id 'java'
-	id 'com.google.cloud.tools.jib' version '2.2.0'
+    id 'org.springframework.boot' version '2.2.6.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+    id 'com.google.cloud.tools.jib' version '2.2.0'
 }
 
 group = 'com.kupujem.prodajem.nlp'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.11'
+sourceCompatibility = '1.8'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 configurations.all {
-	exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter')
-	compile('org.apache.kafka:kafka-clients:2.2.0')
-	compile('com.fasterxml.jackson.core:jackson-databind:2.9.8')
-	compile('org.springframework.boot:spring-boot-starter-log4j2')
-	compile('org.elasticsearch:elasticsearch:7.6.2')
-	compile('org.elasticsearch.client:elasticsearch-rest-high-level-client:7.6.2')
-	compile('org.elasticsearch.client:elasticsearch-rest-client:7.6.2')
+    compile('org.springframework.boot:spring-boot-starter')
+    compile('org.apache.kafka:kafka-clients:2.2.0')
+    compile('com.fasterxml.jackson.core:jackson-databind:2.9.8')
+    compile('org.springframework.boot:spring-boot-starter-log4j2')
+    compile('org.elasticsearch:elasticsearch:7.6.2')
+    compile('org.elasticsearch.client:elasticsearch-rest-high-level-client:7.6.2')
+    compile('org.elasticsearch.client:elasticsearch-rest-client:7.6.2')
 }
