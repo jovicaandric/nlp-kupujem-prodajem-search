@@ -6,4 +6,7 @@ kafka:
       servers: ${KAFKA_HOST:localhost:9092}
       keySerializer: org.apache.kafka.common.serialization.StringSerializer
       valueSerializer: org.apache.kafka.common.serialization.StringSerializer
-      topic: ad-topic
+      topic: ${KAFKA_AD_TOPIC:ad-topic}
+      compressionType: gzip
+      batchSize: 32768
+      lingerMs: 100

@@ -1,7 +1,7 @@
 kafka:
   consumer:
     ad:
-      topic: ad-topic
+      topic: ${KAFKA_AD_TOPIC:ad-topic}
       servers: ${KAFKA_HOST:localhost:9092}
       keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
       valueDeserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -12,5 +12,5 @@ kafka:
       offsetReset: earliest
 elasticsearch:
   hostname: ${ELASTICSEARCH_HOST:localhost}
-  port: 9200
+  port: ${ELASTICSEARCH_PORT:9200}
   index: ${ELASTICSEARCH_AD_INDEX:kp-nlp-ad-search}
