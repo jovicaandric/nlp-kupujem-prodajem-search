@@ -22,20 +22,21 @@ class ElasticSearchQueryBuilder:
         location_filter = self._build_location_filter(user_search_query)
         price_filter, currency_filter = self._build_price_filter(user_search_query)
 
-        es_query = {
-            "query": {
-                "bool": {
-                    "must": [
-                        ad_name_filter,
-                        category_filter,
-                        location_filter,
-                        price_filter,
-                        currency_filter,
-                    ]
-                }
-            }
-        }
+        filters = [
+            ad_name_filter,
+            category_filter,
+            location_filter,
+            price_filter,
+            currency_filter,
+        ]
 
+        non_empty_filters = [
+            query_filter
+            for query_filter in filters
+            if query_filter != {"match_all": {}}
+        ]
+
+        es_query = {"query": {"bool": {"must": non_empty_filters}}}
         return es_query
 
     def _build_ad_name_filter(self, user_search_query: str) -> Dict:
@@ -72,5 +73,5 @@ class ElasticSearchQueryBuilder:
             price_filter = {modifier: amount for modifier, amount in price_range}
             return (
                 {"range": {"price": price_filter}},
-                {"match": {"currency": currency.lower()}},
+                {"match": {"currency": currency}},
             )
