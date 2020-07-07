@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-search',
@@ -17,6 +18,7 @@ export class SearchComponent {
     this.results = [];
     this.loader = true;
 
-    this.http.get("http://35.207.72.77:8080/api/search/" + this.query).subscribe((results: any) => { this.results = results; this.loader = false; });
+    const url = `${environment.apiUrl}/api/search/${this.query}`;
+    this.http.get(url).subscribe((results: any) => { this.results = results; this.loader = false; });
   }
 }
