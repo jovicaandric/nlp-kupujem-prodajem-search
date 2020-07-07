@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties
 @ConfigurationProperties("elasticsearch")
 public class ElasticsearchConfiguration {
+
     private String hostname;
     private int port;
     private String index;
