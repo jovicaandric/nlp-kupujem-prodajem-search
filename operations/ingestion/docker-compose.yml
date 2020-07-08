@@ -1,0 +1,31 @@
+version: '3'
+services:
+  websocket-collector:
+    image: nemanjam/kp-nlp-websocket-collector:latest
+    container_name: websocker-collector
+    restart: always
+    environment:
+      KAFKA_HOST: kafka-broker:29092
+      KAFKA_AD_TOPIC: ads
+    networks:
+      - kp_kafka
+  ad-ingestion:
+    image: nemanjam/kp-nlp-ad-ingestion:latest
+    container_name: ad-ingestion
+    restart: always
+    environment:
+      KAFKA_HOST: kafka-broker:29092
+      KAFKA_AD_TOPIC: ads
+      ELASTICSEARCH_HOST: es01
+      ELASTICSEARCH_PORT: 9200
+      ELASTICSEARCH_AD_INDEX: ad
+    networks:
+      - kp_kafka
+      - kp_elastic
+
+networks:
+  kp_kafka:
+    external: true
+
+  kp_elastic:
+    external: true
