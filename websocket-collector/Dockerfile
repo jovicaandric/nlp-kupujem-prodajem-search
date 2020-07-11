@@ -1,4 +1,4 @@
-FROM openjdk:12.0.1
+FROM openjdk:8-jre-alpine
 
 RUN mkdir /app
 COPY build/libs/*.jar /app/app.jar

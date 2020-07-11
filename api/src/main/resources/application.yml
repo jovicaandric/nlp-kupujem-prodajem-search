@@ -1,8 +1,8 @@
 server:
-  port: 8080
+  port: ${API_PORT:8080}
 elasticsearch:
-  hostname: ${ELASTICSEARCH_HOST:35.207.72.77}
-  port: 9200
-  index: kp-nlp-ad-search
+  hostname: ${ELASTICSEARCH_HOST:localhost}
+  port: ${ELASTICSEARCH_PORT:9200}
+  index: ${ELASTICSEARCH_AD_INDEX:ad}
 analyzer:
-  url: ${KP_NLP_ANALYZER:localhost:8080}
+  url: ${ANALYZER_URL:http://localhost:5000/analyzer}

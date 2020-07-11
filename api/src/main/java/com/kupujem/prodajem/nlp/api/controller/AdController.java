@@ -2,7 +2,8 @@ package com.kupujem.prodajem.nlp.api.controller;
 
 import java.io.IOException;
 import java.util.List;
-import com.kupujem.prodajem.nlp.api.elasticsearch.ElasticserachRepository;
+import com.kupujem.prodajem.nlp.api.analyzer.QueryAnalyzerClient;
+import com.kupujem.prodajem.nlp.api.elasticsearch.ElasticsearchRepository;
 import com.kupujem.prodajem.nlp.api.model.Ad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/")
 public class AdController {
 
-    private ElasticserachRepository repository;
+    private final ElasticsearchRepository repository;
+    private final QueryAnalyzerClient queryAnalyzerClient;
 
     @Autowired
-    public AdController(final ElasticserachRepository repository) {
+    public AdController(final ElasticsearchRepository repository, final QueryAnalyzerClient queryAnalyzerClient) {
         this.repository = repository;
+        this.queryAnalyzerClient = queryAnalyzerClient;
     }
 
     @GetMapping(path = "search/{query}", produces = "application/json")
     public ResponseEntity<List<Ad>> query(@PathVariable final String query) throws IOException {
-        return ResponseEntity.ok(repository.findAllBy(query));
+        final String esQuery = queryAnalyzerClient.buildElasticsearchQuery(query);
+        final List<Ad> result = repository.findAllBy(esQuery);
+        return ResponseEntity.ok(result);
     }
 }
