@@ -1,4 +1,6 @@
+import re
 from typing import Optional
+
 from dataclasses import dataclass
 
 from . import paths
@@ -53,14 +55,15 @@ class Pipeline:
         self, step_input: QueryAnalysisResult
     ) -> QueryAnalysisResult:
         query = step_input.query
-        location = self._ad_location_predictor.predict(query)
-        output = step_input.update(query=query, location=location)
+        location, new_query = self._ad_location_predictor.predict(query)
+        output = step_input.update(query=new_query, location=location)
         return output
 
     def _run_price_step(self, step_input: QueryAnalysisResult) -> QueryAnalysisResult:
         query = step_input.query
-        price_query, currency = self._price_range_parser.parse(query)
+        price_query, currency, new_query = self._price_range_parser.parse(query)
+        new_query = re.sub("\\s+", " ", new_query).strip()
         output = step_input.update(
-            query=query, price_query=price_query, currency=currency
+            query=new_query, price_query=price_query, currency=currency
         )
         return output

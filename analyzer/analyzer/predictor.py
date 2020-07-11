@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Callable, Optional, Type
+from typing import TypeVar, Callable, Type, Any
 
 
 PredictorType = TypeVar("PredictorType", bound="BasePredictor")
@@ -15,5 +15,5 @@ class BasePredictor(ABC):
         pass
 
     @abstractmethod
-    def predict(self, user_query: str) -> Optional[str]:
+    def predict(self, user_query: str) -> Any:
         pass

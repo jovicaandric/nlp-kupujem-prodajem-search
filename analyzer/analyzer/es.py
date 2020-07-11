@@ -13,7 +13,7 @@ class ElasticSearchQueryBuilder:
 
         ad_name_filter = self._build_ad_name_filter(analysis_results.query)
         category_filter = self._build_category_filter(analysis_results.category)
-        location_filter = self._build_location_filter(user_search_query)
+        location_filter = self._build_location_filter(analysis_results.location)
         price_filter, currency_filter = self._build_price_filter(
             analysis_results.price_query, analysis_results.currency
         )

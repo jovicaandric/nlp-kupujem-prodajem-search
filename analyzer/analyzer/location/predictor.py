@@ -2,7 +2,7 @@ import logging
 import os
 import pickle
 from collections import defaultdict
-from typing import Optional
+from typing import Optional, List, Tuple
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -37,7 +37,7 @@ class AdLocationPredictor(BasePredictor):
 
         return cls(vectorizer)
 
-    def predict(self, user_query: str) -> Optional[str]:
+    def predict(self, user_query: str) -> Tuple[Optional[str], str]:
         clean_query = utils.remove_non_text_chars(text=user_query.lower())
 
         query_word_ngrams = []
@@ -51,21 +51,41 @@ class AdLocationPredictor(BasePredictor):
         max_indices = similarities.argmax(axis=1)
         max_similarities = similarities[range(len(query_word_ngrams)), max_indices]
 
-        location_scores = defaultdict(list)
-        for index, similarity in zip(max_indices, max_similarities):
+        location_similarity_scores = defaultdict(list)
+        location_token_to_ngram_indices = defaultdict(list)
+        for ngram_index, (index, similarity) in enumerate(
+            zip(max_indices, max_similarities)
+        ):
             if similarity > self._confidence_threshold:
                 location_token = self._location_tokens[index]
-                location_scores[location_token].append(similarity)
+                location_similarity_scores[location_token].append(similarity)
 
-        prediction: Optional[str]
-        if location_scores:
+                # Store ngram indices to track which part of input query
+                # corresponds to predicted location.
+                location_token_to_ngram_indices[location_token].append(ngram_index)
+
+        location: Optional[str] = None
+        location_query_words: Optional[str] = None
+        if location_similarity_scores:
             best_location_token, _ = max(
-                location_scores.items(), key=lambda pair: sum(pair[1])
+                location_similarity_scores.items(), key=lambda pair: sum(pair[1])
             )
-            prediction = self._location_reverse_index.get(best_location_token)
+            location = self._location_reverse_index.get(best_location_token)
+            location_query_words = self._get_location_query_words(
+                location_token_to_ngram_indices[best_location_token], query_word_ngrams
+            )
+
+        if location_query_words:
+            new_query = user_query.replace(location_query_words, "")
         else:
-            prediction = None
+            new_query = user_query
 
-        logger.debug(f"Predicted '{prediction}' as location for query: '{user_query}'")
+        return location, new_query
 
-        return prediction
+    def _get_location_query_words(
+        self, ngram_indices: List[int], ngrams: List[str]
+    ) -> str:
+        words = max(
+            [ngrams[idx] for idx in ngram_indices], key=lambda ngram: len(ngram.split())
+        )
+        return words
