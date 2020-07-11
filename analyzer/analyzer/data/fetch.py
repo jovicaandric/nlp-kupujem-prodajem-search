@@ -32,6 +32,8 @@ COLUMNS = [
     "latitude",
     "longitude",
     "posted_at",
+    "thumbnail",
+    "url",
 ]
 
 
@@ -105,7 +107,7 @@ def fetch(es_host: str, index: str, size: int) -> None:
                 index=index,
                 query=search_query,
                 size=size,
-                _source_excludes=["html", "thumbnail"],
+                _source_excludes=["html"],
             )
         ]
     except exceptions.ElasticsearchException as e:
