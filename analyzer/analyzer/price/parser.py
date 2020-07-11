@@ -52,21 +52,25 @@ class PriceRangeParser:
     def __init__(self) -> None:
         logger.info("Ad price parser initialized")
 
-    def parse(self, query: str) -> Tuple[PriceQuery, Optional[str]]:
+    def parse(self, query: str) -> Tuple[PriceQuery, Optional[str], str]:
         price_range = self._parse_price_range(query)
 
+        none_response: Tuple[PriceQuery, None, str] = ([], None, query)
         if not price_range:
-            return [], None
+            return none_response
 
         price_query, currency = self._parse_price_query(price_range)
 
         if all(price_filter == self.DEFAULT_FILTER for price_filter in price_query):
-            return [], None
+            return none_response
 
         if currency is None:
-            currency = self._parse_currency(query)
+            currency, token = self._parse_currency(query)
 
-        return price_query, currency
+        price_words = " ".join([word for word, _ in price_range])
+        new_query = query.replace(price_words, "").replace(token, "")
+
+        return price_query, currency, new_query
 
     def _parse_price_range(self, query: str) -> WordPosList:
         word_upos: WordPosList = [
@@ -197,17 +201,17 @@ class PriceRangeParser:
             "ispod": Modifier.LESS_OR_EQUAL,
         }.get(modifier, Modifier.NONE)
 
-    def _parse_currency(self, query: str) -> str:
+    def _parse_currency(self, query: str) -> Tuple[str, str]:
         query_lower = query.lower()
         for rsd_token in Currency.RSD_TOKENS:
             if rsd_token in query_lower:
-                return Currency.RSD
+                return Currency.RSD, rsd_token
 
         for eur_token in Currency.EUR_TOKENS:
             if eur_token in query_lower:
-                return Currency.EUR
+                return Currency.EUR, rsd_token
 
-        return Currency.DEFAULT
+        return Currency.DEFAULT, ""
 
 
 if __name__ == "__main__":
