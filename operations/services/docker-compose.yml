@@ -5,6 +5,8 @@ services:
     container_name: analyzer
     ports:
       - 5000:5000
+    networks:
+      - api
   api:
     image: nemanjam/kp-nlp-api:latest
     container_name: api
@@ -16,15 +18,17 @@ services:
     ports:
     - 8080:8080
     networks:
+      - api
       - kp_elastic
   frontend:
     image: nemanjam/kp-nlp-frontend:latest
     container_name: frontend
     environment:
-      API_URL: http://localhost:8080
+      API_BASE_URL: http://192.168.10.24:8080
     ports:
     - 80:80
 
 networks:
   kp_elastic:
     external: true
+  api:
