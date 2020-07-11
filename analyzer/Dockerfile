@@ -18,9 +18,11 @@ COPY poetry.lock pyproject.toml /opt/kp/
 
 RUN POETRY_VIRTUALENVS_CREATE=false poetry install --no-dev --no-interaction --no-ansi
 
-RUN mkdir -p /opt/kp/{models,analyzer}
+RUN python -c "import stanza; stanza.download('sr')" && \
+      rm "$HOME/stanza_resources/sr/default.zip"
 
 COPY models/ads.category.100.ftz /opt/kp/models/
+COPY models/ads.location.vectorizer.pkl /opt/kp/models/
 COPY analyzer /opt/kp/analyzer/
 
-CMD ["gunicorn", "--workers", "2", "--bind", "0.0.0.0:5000", "analyzer.wsgi:app"]
+CMD ["gunicorn", "--workers", "3", "--bind", "0.0.0.0:5000", "analyzer.wsgi:app"]
