@@ -1,6 +1,6 @@
-<mat-toolbar color="primary">Kupujem Prodajem NLP Powered Search Engine</mat-toolbar>
+<mat-toolbar color="primary">KupujemProdajem.com NLP Powered Search Engine Demo</mat-toolbar>
 <mat-progress-bar *ngIf="loader" mode="indeterminate"></mat-progress-bar>
-<form class="example-form">
+<form class="example-form" autocomplete="off">
   <mat-form-field class="search-field">
     <input matInput placeholder="Search kupujemprodajem.com" [(ngModel)]="query" name="query">
   </mat-form-field>
@@ -9,13 +9,12 @@
   </button>
 </form>
 <div class="search-results">
-  <cdk-virtual-scroll-viewport itemSize="150" style="height: 100vh;">
+  <cdk-virtual-scroll-viewport itemSize="25" style="height: 80vh;">
     <mat-card class="result-card" *cdkVirtualFor="let result of results" style="height: 150px;">
-      <a target="_blank" style="width: 100%;" href="https://kupujemprodajem.com{{result.url}}"
-        style="text-decoration:none">
+      <a target="_blank" style="width: 100%;" href="https://kupujemprodajem.com{{result.url}}" style="text-decoration:none">
         <div fxLayout="column">
           <div fxLayout="row">
-            <div fxFlex="150px">
+            <div fxFlex="200px">
               <img *ngIf="result.thumbnail" src="https://kupujemprodajem.com/{{result.thumbnail}}" />
               <img *ngIf="!result.thumbnail" src="https://images.kupujemprodajem.com//images/no_photo100.png" />
             </div>
@@ -25,7 +24,8 @@
               <p class="ad desc">{{result.description}}</p>
             </div>
             <div fxFlex="100px">
-              <p class="ad price">{{result.price}} {{result.currency}}</p>
+              <p *ngIf="result.price >= 0" class="ad price">{{result.price}} {{result.currency}}</p>
+              <p *ngIf="result.price < 0" class="ad price">{{negativePriceToLabel(result.price)}}</p>
             </div>
             <div fxFlex="100px">
               <p class="ad location">{{result.location}}</p>

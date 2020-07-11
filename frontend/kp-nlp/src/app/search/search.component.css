@@ -1,41 +1,50 @@
 .example-form {
   width: 500px;
-  margin-left:auto;
+  margin-left: auto;
   margin-right: auto;
   margin-top: 24px;
 }
 
-.search-field{
+.search-field {
   width: 450px;
 }
 
 .result-card {
-  width: 750px;
-  margin:24px auto;
-  padding:10px;
+  width: 780px;
+  margin: 24px auto;
+  padding: 10px;
 }
 
-.ad{
+.ad {
   font-style: normal;
   text-decoration: none;
-  color:black;
+  color: black;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #222;
 }
 
 .category {
-  font-size: 11px;
+  font-size: 12px;
   color: gray;
 }
 
 .desc {
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 300;
 }
 
 .price {
-  font-size: 12px;
+  font-size: 18px;
+  font-weight: 400;
+  color: green;
 }
 
 .location {
-  font-size: 12px;
+  font-size: 18px;
   color: brown;
 }
 

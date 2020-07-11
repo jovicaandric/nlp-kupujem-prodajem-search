@@ -21,4 +21,16 @@ export class SearchComponent {
     const url = `${environment.apiUrl}/api/search/${this.query}`;
     this.http.get(url).subscribe((results: any) => { this.results = results; this.loader = false; });
   }
+
+  negativePriceToLabel(price) {
+    switch (price) {
+      case -1: return "Kontakt";
+      case -2: return "Dogovor";
+      case -3: return "Poziv";
+      case -4: return "Besplatno";
+      case -5: return "Kupujem";
+      case -6: return "Tražim";
+      default: return price;
+    }
+  }
 }
