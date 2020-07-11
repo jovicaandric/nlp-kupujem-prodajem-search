@@ -1,26 +1,22 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 
-from . import paths
-from .category.predictor import AdCategoryPredictor
-from .location.predictor import AdLocationPredictor
-from .price.parser import PriceRangeParser, PriceLabel
+from .pipeline import Pipeline
+from .price.parser import PriceLabel, PriceQuery
 
 
 class ElasticSearchQueryBuilder:
     def __init__(self):
-        self._ad_category_predictor = AdCategoryPredictor.from_path(
-            paths.fasttext_model_file(module="category", dim=100, extension="ftz")
-        )
-        self._ad_location_predictor = AdLocationPredictor.from_path(
-            paths.LOCATIONS_VECTORIZER_PATH
-        )
-        self._price_range_parser = PriceRangeParser()
+        self._pipeline = Pipeline()
 
     def build(self, user_search_query: str) -> Dict:
-        ad_name_filter = self._build_ad_name_filter(user_search_query)
-        category_filter = self._build_category_filter(user_search_query)
+        analysis_results = self._pipeline.run(user_search_query)
+
+        ad_name_filter = self._build_ad_name_filter(analysis_results.query)
+        category_filter = self._build_category_filter(analysis_results.category)
         location_filter = self._build_location_filter(user_search_query)
-        price_filter, currency_filter = self._build_price_filter(user_search_query)
+        price_filter, currency_filter = self._build_price_filter(
+            analysis_results.price_query, analysis_results.currency
+        )
         ads_exceptions_filters = self._build_ads_exceptions_filter()
 
         filters = [
@@ -53,29 +49,25 @@ class ElasticSearchQueryBuilder:
             }
         }
 
-    def _build_category_filter(self, user_search_query: str) -> Dict:
-        category = self._ad_category_predictor.predict(user_search_query)
-
+    def _build_category_filter(self, category: Optional[str]) -> Dict:
         if category is None:
             return {"match_all": {}}
         else:
             return {"match": {"category": category}}
 
-    def _build_location_filter(self, user_search_query: str) -> Dict:
-        location = self._ad_location_predictor.predict(user_search_query)
-
+    def _build_location_filter(self, location: Optional[str]) -> Dict:
         if location is None:
             return {"match_all": {}}
         else:
             return {"match": {"location": location}}
 
-    def _build_price_filter(self, user_search_query: str) -> Tuple[Dict, Dict]:
-        price_range, currency = self._price_range_parser.parse(user_search_query)
-
-        if not price_range:
+    def _build_price_filter(
+        self, price_query: PriceQuery, currency: Optional[str]
+    ) -> Tuple[Dict, Dict]:
+        if not price_query:
             return {"match_all": {}}, {"match_all": {}}
         else:
-            price_filter = {modifier: amount for modifier, amount in price_range}
+            price_filter = {modifier: amount for modifier, amount in price_query}
             return (
                 {"range": {"price": price_filter}},
                 {"match": {"currency": currency}},
