@@ -15,8 +15,8 @@
         <div fxLayout="column">
           <div fxLayout="row">
             <div fxFlex="200px">
-              <img *ngIf="result.thumbnail" src="https://kupujemprodajem.com/{{result.thumbnail}}" />
-              <img *ngIf="!result.thumbnail" src="https://images.kupujemprodajem.com//images/no_photo100.png" />
+              <img src="https://kupujemprodajem.com/{{result.thumbnail}}"
+                 onerror="this.src='https://images.kupujemprodajem.com/images/no_photo100.png'"/>
             </div>
             <div fxFlex="300px" style="padding:10px;">
               <p class="ad category">{{result.category}} > {{result.subCategory}}</p>
