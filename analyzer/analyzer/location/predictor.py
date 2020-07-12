@@ -65,14 +65,18 @@ class AdLocationPredictor(BasePredictor):
                 location_token_to_ngram_indices[location_token].append(ngram_index)
 
         location: Optional[str] = None
-        location_query_words: Optional[str] = None
         if location_similarity_scores:
             best_location_token, _ = max(
                 location_similarity_scores.items(), key=lambda pair: sum(pair[1])
             )
             location = self._location_reverse_index.get(best_location_token)
+
+        location_query_words: Optional[str] = None
+        if location:
             location_query_words = self._get_location_query_words(
-                location_token_to_ngram_indices[best_location_token], query_word_ngrams
+                location_token_to_ngram_indices[best_location_token],
+                query_word_ngrams,
+                location,
             )
 
         if location_query_words:
@@ -83,9 +87,14 @@ class AdLocationPredictor(BasePredictor):
         return location, new_query
 
     def _get_location_query_words(
-        self, ngram_indices: List[int], ngrams: List[str]
+        self, ngram_indices: List[int], ngrams: List[str], predicted_location: str
     ) -> str:
-        words = max(
-            [ngrams[idx] for idx in ngram_indices], key=lambda ngram: len(ngram.split())
-        )
+        max_words = len(predicted_location.split())
+        location_ngrams = [
+            ngrams[idx]
+            for idx in ngram_indices
+            if len(ngrams[idx].split()) == max_words
+        ]
+
+        words = max(location_ngrams, key=lambda ngram: len(ngram.split()))
         return words

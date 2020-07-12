@@ -13,17 +13,17 @@ from .price.parser import PriceRangeParser, PriceQuery
 class QueryAnalysisResult:
     query: str
     category: Optional[str] = None
-    location: Optional[str] = None
     price_query: Optional[PriceQuery] = None
     currency: Optional[str] = None
+    location: Optional[str] = None
 
     def update(self, **kwargs) -> "QueryAnalysisResult":
         query = kwargs.get("query", self.query)
         category = kwargs.get("category", self.category)
-        location = kwargs.get("location", self.location)
         price_query = kwargs.get("price_query", self.price_query)
         currency = kwargs.get("currency", self.currency)
-        return QueryAnalysisResult(query, category, location, price_query, currency)
+        location = kwargs.get("location", self.location)
+        return QueryAnalysisResult(query, category, price_query, currency, location)
 
 
 class Pipeline:
@@ -37,11 +37,11 @@ class Pipeline:
         self._price_range_parser = PriceRangeParser()
 
     def run(self, query: str) -> QueryAnalysisResult:
-        step_input = QueryAnalysisResult(query=query)
-        category_step = self._run_category_step(step_input)
-        location_step = self._run_location_step(category_step)
-        output = self._run_price_step(location_step)
-        return output
+        step = QueryAnalysisResult(query=query)
+        step = self._run_category_step(step)
+        step = self._run_price_step(step)
+        step = self._run_location_step(step)
+        return step
 
     def _run_category_step(
         self, step_input: QueryAnalysisResult
